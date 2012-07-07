@@ -326,20 +326,6 @@ header #steps .step .number {
   height: 50px;
 }
 
-/*header #steps .step.active .number:after {
-  right: -45px;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-  border-right-color: #444;
-  border-width: 30px;
-  top: 50%;
-  margin-top: -30px;
-}*/
-
 header #steps .step.active .number:after, header #steps .step.active .number:before {
   right: -45px;
   border: solid transparent;
