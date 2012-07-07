@@ -364,6 +364,13 @@ header #steps .step.active .number {
   margin-left: 140px;
 }
 
+#photo-area {
+  margin: 0 auto;
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
 #photo-crop {
   -moz-box-sizing: border-box;  box-sizing: border-box;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
@@ -428,26 +435,30 @@ header #steps .step.active .number {
 }
 
 #effects {
-  background: #222;
   color: #fff;
-  text-align: center;
-  padding: 5px;
+  list-style: none;
+  position: absolute;
+  right: -170px;
+  top: 0;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.4);
+  z-index: -1;
 }
 
 #effects .effect {
-  display: inline-block;
-  margin: 5px;
-  width: 90px;
-}
-
-#effects .effect .thumb {
-  border: 5px solid #fff;
+  background: #ffe300;
+  border-radius: 0 5px 5px 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  margin-bottom: 5px;
+  color: #444;
+  font: 14px/1  Karla, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  margin-bottom: 10px;
+  padding: 10px 10px 10px 30px;
+  text-transform: uppercase;
+  width: 150px;
 }
 
-#effects .effect .name {
-  margin: 0;
+#effects .effect:hover {
+  background: red;
+  margin-left: -20px;
 }
 
 #share .provider {

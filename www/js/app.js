@@ -272,10 +272,7 @@ var ui = {
   colors: ['#900', '#06c', '#360'],
 
   init: function() {
-    var self = this;
-    $('#take').click(function() {
-      self.nextStep();
-    });
+    this.initCapture();
   },
 
   nextStep: function() {
@@ -290,7 +287,30 @@ var ui = {
     var stepEl = $(stepEls[this.step]);
     stepEl.addClass('active');
 
+    switch (this.step) {
+      case 1: this.initEffects(); break;
+      case 2: this.initShare(); break;
+    }
+
     return true;
+  },
+
+  initCapture: function() {
+    var self = this;
+    $('#take').click(function() {
+      self.nextStep();
+    });
+    // $('#effects').hide();
+  },
+
+  initEffects: function() {
+    $('#take').hide();
+    $('#effects').show();
+  },
+
+  initShare: function() {
+    $('#take').hide();
+    $('#effects').hide();
   }
 }
 
