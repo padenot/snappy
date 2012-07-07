@@ -12,6 +12,49 @@ require.config({
 
 var global = this;
 
+function rgb2hsv(r, g, b){
+    r = r/255, g = g/255, b = b/255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, v = max;
+
+    var d = max - min;
+    s = max == 0 ? 0 : d / max;
+
+    if(max == min){
+        h = 0; // achromatic
+    }else{
+        switch(max){
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return [h, s, v];
+}
+
+function hsv2rgb(h, s, v){
+    var r, g, b;
+
+    var i = Math.floor(h * 6);
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch(i % 6){
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+
+    return [r * 255, g * 255, b * 255];
+}
+
 var filters = {
   "blackwhite" : function(data, out, h, w) {
     for(var i = 0; i < data.length; i+=4) {
@@ -32,7 +75,7 @@ var filters = {
       out[i+2] = (r * 0.272) + (g * 0.534) + (b * 0.131);
     }
   },
-  "constrast" : function(data, out, h, w, param) {
+  "contrast" : function(data, out, h, w, param) {
     function contrast(f, param) {
       return (f - 0.5) * param + 0.5;
     }
@@ -63,6 +106,67 @@ var filters = {
       out[i]   = 255 - r;
       out[i+1] = 255 - g;
       out[i+2] = 255 - b;
+    }
+  },
+  // c: scaling factor
+  "saturate" : function(data, out, h, w, saturation) {
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i], g = data[i+1], b = data[i+2];
+
+      hsv = rgb2hsv(r, g, b);
+
+      h = hsv[0];
+      s = hsv[1] * saturation;
+      v = hsv[2];
+
+      rgb = hsv2rgb(h, s, v);
+
+      out[i]   = rgb[0];
+      out[i+1] = rgb[1];
+      out[i+2] = rgb[2];
+    }
+  },
+  "gamma" : function(data, out, h, w, gamma) {
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i], g = data[i+1], b = data[i+2];
+
+      hsv = rgb2hsv(r, g, b);
+
+      h = hsv[0];
+      s = hsv[1];
+      v = hsv[2] * gamma;
+
+      rgb = hsv2rgb(h, s, v);
+
+      out[i]   = rgb[0];
+      out[i+1] = rgb[1];
+      out[i+2] = rgb[2];
+    }
+  },
+  // color: 
+  "tint" : function(data, out, h, w, color, strength) {
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i], g = data[i+1], b = data[i+2];
+
+      hsv = rgb2hsv(r, g, b);
+
+      var h = hsv[0];
+      //alert(h);
+      if (h > color) {
+        //alert("h: " + ( h - color ));
+        h -= (h - color) * strength;
+        //alert("h: " + h);
+      } else {
+        h += Math.abs(h - color) * strength;
+      }
+      s = hsv[1];
+      v = hsv[2];
+
+      rgb = hsv2rgb(h, s, v);
+
+      out[i]   = rgb[0];
+      out[i+1] = rgb[1];
+      out[i+2] = rgb[2];
     }
   }
 }
@@ -96,17 +200,44 @@ require(['jquery'], function($) {
       var h = idata.height;
       var limit = data.length;
 
+      var effect = [
+        {
+          f: filters.contrast,
+          param1: 1.7
+        }, {
+          f: filters.vignetting,
+          param1: 1.1
+        }, {
+          f: filters.tint,
+          param1: 0.1,
+          param2: 1
+        }, {
+          f: filters.gamma,
+          param1: 1.4,
+        }
+      ];
+
       for (var i = 0; i < other.length; i += 4) {
         other[i+3] = 255;
       }
 
-      filters.sepia(data, other, h, w);
-      filters.constrast(other, data, h, w, 1.7);
-      filters.vignetting(data, other, h, w, 1.1);
+      var input = data,
+          out = other;
+      for (var i = 0; i < effect.length; i++) {
+        effect[i].f(input, out, h, w, effect[i].param1, effect[i].param2);
+        var tmp = input;
+        input = out;
+        out = tmp;
+      }
+
+      //filters.sepia(data, other, h, w);
+      //filters.constrast(other, data, h, w, 1.7);
+      //filters.vignetting(data, other, h, w, 1.1);
+      //filters.tint(other, data, h, w, 0.1, 1);
 
       processed.width = v.videoWidth;
       processed.height = v.videoHeight;
-      p.putImageData(iother,0,0);
+      p.putImageData(idata, 0, 0);
     }
   });
   if (navigator.mozGetUserMedia) {
