@@ -499,7 +499,7 @@ function share() {
   }
   // open the popup in the click handler so it will not be blocked
   var w = window.open();
-  w.document.write('Uploading...');
+  w.document.write('Sending the image in the internetz...');
   // upload to imgur using jquery/CORS
   // https://developer.mozilla.org/En/HTTP_access_control
   $.ajax({
@@ -511,7 +511,7 @@ function share() {
       key: 'aa325d27b64d323ae34eba7b029b2d85',
       name: '',
       title: 'HIPSTAH',
-      caption: "I'm was filtering photo before it was mainstream",
+      caption: "I'm was filtering photos before it was mainstream",
       image: img
     },
     dataType: 'json'
@@ -522,7 +522,6 @@ function share() {
     w.close();
   });
 }
-});
 
 // Include the in-app payments API, and if it fails to load handle it
 // gracefully.
