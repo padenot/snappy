@@ -282,7 +282,8 @@ body {
 
 header {
   -moz-box-sizing: border-box;
-  background: #222;
+  background: #900;
+  box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.4);
   padding: 20px;
   position: absolute;
   left: 0;
@@ -293,7 +294,8 @@ header {
 
 header h1 {
   -moz-box-sizing: border-box;
-  background: #777;
+  background: #222;
+  box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.4);
   font-size: 24px;
   margin: -20px;
   margin-bottom: 40px;
@@ -312,7 +314,7 @@ header #steps .step {
 }
 
 header #steps .step .number {
-  background: #777;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 25px;
   font-size: 24px;
   font-weight: bold;
@@ -324,7 +326,7 @@ header #steps .step .number {
   height: 50px;
 }
 
-header #steps .step.active .number:after {
+/*header #steps .step.active .number:after {
   right: -45px;
   border: solid transparent;
   content: " ";
@@ -336,6 +338,31 @@ header #steps .step.active .number:after {
   border-width: 30px;
   top: 50%;
   margin-top: -30px;
+}*/
+
+header #steps .step.active .number:after, header #steps .step.active .number:before {
+  right: -45px;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+header #steps .step.active .number:after {
+  border-right-color: #444;
+  border-width: 30px;
+  top: 50%;
+  margin-top: -30px;
+}
+
+header #steps .step.active .number:before {
+  border-right-color: rgba(0, 0, 0, 0.4);
+  border-width: 33px;
+  top: 50%;
+  right: -40px;
+  margin-top: -33px;
 }
 
 header #steps .step.active .number {
