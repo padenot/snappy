@@ -430,7 +430,6 @@ header #steps .step.active .number {
 #effects {
   background: #222;
   color: #fff;
-  display: none;
   text-align: center;
   padding: 5px;
 }
