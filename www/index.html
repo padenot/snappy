@@ -59,26 +59,23 @@
 
     <div id="content">
         <!-- <img src="http://placehold.it/400x400" id="v"> -->
-        <div id="photo-crop">
-            <span>
-                <video id="v" class="framed" width="530" height="400" autoplay></video>
-                <canvas id="c" class="framed" style="display:none"></canvas>
-                <canvas id="p" class="hidden"></canvas> 
-            </span>
+        <div id="photo-area">
+            <div id="photo-crop">
+                <span>
+                    <video id="v" class="framed" width="530" height="400" autoplay></video>
+                    <canvas id="c" class="framed" style="display:none"></canvas>
+                    <canvas id="p" class="hidden"></canvas> 
+                </span>
+            </div>
+            <ul id="effects">
+                <li class="effect" id="greenish">Greenish</li>
+                <li class="effect" id="hot">Hot</li>
+                <li class="effect" id="blackwhite">B&amp;W</li>
+                <li class="effect" id="cold">Cold</li>
+            </ul>
         </div>
 
         <button id="take" class="ss-camera">Take a picture</button>
-
-        <div id="effects">
-            <div class="effect" id=greenish><img src="http://placehold.it/80x80" class="thumb"><p class="name">Greenish</p></div>
-            <div class="effect" id=blackwhite><img src="http://placehold.it/80x80" class="thumb"><p class="name">B&amp;W</p></div>
-            <div class="effect" id=cold><img src="http://placehold.it/80x80" class="thumb"><p class="name">Cold</p></div>
-            <div class="effect" id=hot><img src="http://placehold.it/80x80" class="thumb"><p class="name">Hot</p></div>
-            <div class="effect" id=pixelate><img src="http://placehold.it/80x80" class="thumb"><p class="name">Pixelate</p></div>
-            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
-            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
-            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
-        </div>
 
         <div id="share">
             <div class="provider" id="facebook">Share</div>

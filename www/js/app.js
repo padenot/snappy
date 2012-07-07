@@ -12,6 +12,10 @@ require.config({
 
 var global = this;
 
+function uploadImgur() {
+  var key = "aa325d27b64d323ae34eba7b029b2d85";
+}
+
 function rgb2hsv(r, g, b){
     r = r/255, g = g/255, b = b/255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -293,10 +297,7 @@ var ui = {
   colors: ['#900', '#06c', '#360'],
 
   init: function() {
-    var self = this;
-    $('#take').click(function() {
-      self.nextStep();
-    });
+    this.initCapture();
   },
 
   nextStep: function() {
@@ -311,7 +312,30 @@ var ui = {
     var stepEl = $(stepEls[this.step]);
     stepEl.addClass('active');
 
+    switch (this.step) {
+      case 1: this.initEffects(); break;
+      case 2: this.initShare(); break;
+    }
+
     return true;
+  },
+
+  initCapture: function() {
+    var self = this;
+    $('#take').click(function() {
+      self.nextStep();
+    });
+    // $('#effects').hide();
+  },
+
+  initEffects: function() {
+    $('#take').hide();
+    $('#effects').show();
+  },
+
+  initShare: function() {
+    $('#take').hide();
+    $('#effects').hide();
   }
 }
 
@@ -356,6 +380,7 @@ require(['jquery'], function($) {
   }
 
   document.getElementById("greenish").addEventListener("click", function(e) {
+    alert("plop");
     c.putImageData(process(effects.greenish), 0, 0);
   });
   document.getElementById("blackwhite").addEventListener("click", function(e) {
@@ -366,9 +391,6 @@ require(['jquery'], function($) {
   });
   document.getElementById("hot").addEventListener("click", function(e) {
     c.putImageData(process(effects.hot), 0, 0);
-  });
-  document.getElementById("pixelate").addEventListener("click", function(e) {
-    c.putImageData(process(effects.pixelate), 0, 0);
   });
 
   var v = document.getElementById("v");
@@ -431,9 +453,10 @@ require(['jquery'], function($) {
       p.putImageData(iother,0,0);
     }
   });
-  navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-  window.URL = window.URL || window.webkitURL;
-  if (navigator.getUserMedia) {
+  if (navigator.mozGetUserMedia) {
+    //navigator.getUserMedia('video', successCallback, errorCallback);
+    // Below is the latest syntax. Using the old syntax for the time being
+    // for backwards compatibility.
     function successCallback(stream) {
       document.getElementById("v").src = stream;
       document.getElementById("v").play();
@@ -442,7 +465,20 @@ require(['jquery'], function($) {
       console.error('An error occurred: [CODE ' + error.code + ']');
       return;
     }
-    navigator.getUserMedia({video: true}, successCallback, errorCallback);
+    navigator.mozGetUserMedia({video: true}, successCallback, errorCallback);
+  } else if (navigator.webkitGetUserMedia) {
+    //navigator.getUserMedia('video', successCallback, errorCallback);
+    // Below is the latest syntax. Using the old syntax for the time being
+    // for backwards compatibility.
+    function successCallback(stream) {
+      document.getElementById("v").src = webkitURL.createObjectURL(stream);
+      document.getElementById("v").play();
+    }
+    function errorCallback(error) {
+      console.error('An error occurred: [CODE ' + error.code + ']');
+      return;
+    }
+    navigator.webkitGetUserMedia({video: true}, successCallback, errorCallback);
   } else {
     console.log('Native web camera streaming (getUserMedia) is not supported in this browser.');
     return;
@@ -452,6 +488,40 @@ require(['jquery'], function($) {
   // components that you use, like so:
   // require('bootstrap/dropdown');
   // require('bootstrap/alert');
+
+document.getElementById("twitter").addEventListener("click", share);
+// trigger me onclick
+function share() {
+  try {
+    var img = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
+  } catch(e) {
+    var img = canvas.toDataURL().split(',')[1];
+  }
+  // open the popup in the click handler so it will not be blocked
+  var w = window.open();
+  w.document.write('Uploading...');
+  // upload to imgur using jquery/CORS
+  // https://developer.mozilla.org/En/HTTP_access_control
+  $.ajax({
+    url: 'http://api.imgur.com/2/upload.json',
+    type: 'POST',
+    data: {
+      type: 'base64',
+      // get your key here, quick and fast http://imgur.com/register/api_anon
+      key: 'aa325d27b64d323ae34eba7b029b2d85',
+      name: '',
+      title: 'HIPSTAH',
+      caption: "I'm was filtering photo before it was mainstream",
+      image: img
+    },
+    dataType: 'json'
+  }).success(function(data) {
+    w.location.href = "https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: "+ data['upload']['links']['imgur_page'];
+  }).error(function() {
+    alert('Could not reach api.imgur.com. Sorry :(');
+    w.close();
+  });
+}
 });
 
 // Include the in-app payments API, and if it fails to load handle it
