@@ -151,11 +151,8 @@ var filters = {
       hsv = rgb2hsv(r, g, b);
 
       var h = hsv[0];
-      //alert(h);
       if (h > color) {
-        //alert("h: " + ( h - color ));
-        h -= (h - color) * strength;
-        //alert("h: " + h);
+        h -= Math.abs(h - color) * strength;
       } else {
         h += Math.abs(h - color) * strength;
       }
@@ -213,6 +210,21 @@ var filters = {
         out[i+3] = newAmount*out[i+3] + origAmount*data[i+3];
       }
     }
+  },
+  pixelate: function(data, out, h, w) {
+    var blockSize = w / 20;
+    for (var i = 0; i < w; i+=blockSize) {
+      for (var j = 0; j < w; j+=blockSize) {
+        var avg = [0,0,0];
+        for (var k = i; k < blockSize; k++) {
+          for (var l = j; l < blockSize; l+=blockSize) {
+            avg[0] = data[k % blockSize + l];
+            avg[1] = data[k % blockSize + l];
+            avg[2] = data[k % blockSize + l];
+          }
+        }
+      }
+    }
   }
 }
 
@@ -245,8 +257,8 @@ var effects ={
     param1: 1.1
   }, {
     f: filters.tint,
-    param1: 0.1,
-    param2: 1
+    param1: 0.33,
+    param2: 0.8
   }, {
     f: filters.gamma,
     param1: 1.4,
@@ -260,15 +272,27 @@ var effects ={
   cold: [
     {
     f:filters.tint,
-    param1:0.75,
+    param1:0.66,
     param2:1
+  },
+  {
+    f:filters.saturate,
+    param1:0.6
   }
   ],
   hot: [
     {
     f:filters.tint,
-    param1:0.1666,
+    param1:0.1,
     param2:1
+  },
+  {
+    f: filters.contrast,
+    param1: 1.4
+  },
+  {
+    f:filters.gamma,
+    param1: 1.1
   }
   ]
 };
