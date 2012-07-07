@@ -301,16 +301,19 @@ var ui = {
       self.nextStep();
     });
     $('#effects').hide();
+    $('#share').hide();
   },
 
   initEffects: function() {
     $('#take').hide();
     $('#effects').show();
+    $('#share').hide();
   },
 
   initShare: function() {
     $('#take').hide();
     $('#effects').hide();
+    $('#share').show();
   }
 }
 
@@ -354,14 +357,10 @@ require(['jquery'], function($) {
     }
   }
 
-  document.getElementById("greenish").addEventListener("click", function(e) {
-    c.putImageData(process(effects.greenish), 0, 0);
-  });
-  document.getElementById("blackwhite").addEventListener("click", function(e) {
-    c.putImageData(process(effects.blackwhite), 0, 0);
-  });
-  document.getElementById("cold").addEventListener("click", function(e) {
-    c.putImageData(process(effects.cold), 0, 0);
+  $('.effect').click(function() {
+    var name = this.id;
+    c.putImageData(process(effects[name]), 0, 0);
+    ui.nextStep();
   });
 
   var v = document.getElementById("v");
