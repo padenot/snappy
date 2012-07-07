@@ -12,6 +12,10 @@ require.config({
 
 var global = this;
 
+function uploadImgur() {
+  var key = "aa325d27b64d323ae34eba7b029b2d85";
+}
+
 function rgb2hsv(r, g, b){
     r = r/255, g = g/255, b = b/255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -151,11 +155,8 @@ var filters = {
       hsv = rgb2hsv(r, g, b);
 
       var h = hsv[0];
-      //alert(h);
       if (h > color) {
-        //alert("h: " + ( h - color ));
-        h -= (h - color) * strength;
-        //alert("h: " + h);
+        h -= Math.abs(h - color) * strength;
       } else {
         h += Math.abs(h - color) * strength;
       }
@@ -259,22 +260,25 @@ function setEffectDefaults(effect) {
   }
 }
 
+var masks = [
+];
+
 var effects ={
   greenish: [
     {
-      f: filters.contrast,
-      param1: 1.7
-    }, {
-      f: filters.vignetting,
-      param1: 1.1
-    }, {
-      f: filters.tint,
-      param1: 0.1,
-      param2: 1
-    }, {
-      f: filters.gamma,
-      param1: 1.4,
-    }
+    f: filters.contrast,
+    param1: 1.7
+  }, {
+    f: filters.vignetting,
+    param1: 1.1
+  }, {
+    f: filters.tint,
+    param1: 0.33,
+    param2: 0.8
+  }, {
+    f: filters.gamma,
+    param1: 1.4,
+  }
   ],
   blackwhite: [
     {
@@ -283,19 +287,43 @@ var effects ={
   ],
   cold: [
     {
-      f:filters.tint,
-      param1:0.75,
-      param2:1
+    f:filters.tint,
+    param1:0.66,
+    param2:1
+  },
+  {
+    f:filters.saturate,
+    param1:0.6
+  }
+  ],
+  hot: [
+    {
+    f:filters.tint,
+    param1:0.1,
+    param2:1
+  },
+  {
+    f: filters.contrast,
+    param1: 1.4
+  },
+  {
+    f:filters.gamma,
+    param1: 1.1
+  }
+  ],
+  pixelate: [
+    {
+    f:filters.pixelate
     }
   ],
-  test: [
+  mask: [
     {
       f: filters.color,
       param1: [0,0,0,255],
       flipNext: false
     },
     {
-      f: filters.mask
+      f: filters.mask,
     }
   ]
 };
@@ -335,18 +363,26 @@ var ui = {
       self.nextStep();
     });
     $('#effects').hide();
+    $('#share').hide();
   },
 
   initEffects: function() {
     $('#take').hide();
     $('#effects').show();
+    $('#share').hide();
   },
 
   initShare: function() {
     $('#take').hide();
     $('#effects').hide();
+    $('#share').show();
   }
 }
+
+
+
+const WIDTH = 400;
+const HEIGHT = 400;
 
 // When you write javascript in separate files, list them as
 // dependencies along with jquery
@@ -362,8 +398,26 @@ require(['jquery'], function($) {
   var t = temp.getContext("2d");
   var original = null;
 
-  var mask = new Image();
-  mask.src = 'mask1.png';
+  temp.width = WIDTH;
+  temp.height = HEIGHT;
+  var temp = document.getElementById("t");
+  var t = temp.getContext("2d");
+  var div = document.getElementById("out");
+  var m = new Image();
+  m.onload = function() {
+    t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
+    var maskImage = t.getImageData(0,0, temp.width, temp.height).data;
+    var maskArr = new Float32Array(maskImage.length/4);
+    for(var i = 0, j=0; i < maskImage.length; i+=4, j++) {
+      var r = maskImage[i];
+      var g = maskImage[i+1];
+      var b = maskImage[i+2];
+      var brightness = 1 - ((3*r+4*g+b)>>>3)/255;
+      maskArr[j] = brightness;
+    }
+    effects.mask[1].param1 = maskArr;
+  };
+  m.src = 'masks/mask1.png';
 
   function process(effect) {
     var idata = original;
@@ -399,24 +453,17 @@ require(['jquery'], function($) {
       return idata;
     }
   }
-
-  document.getElementById("greenish").addEventListener("click", function(e) {
-    c.putImageData(process(effects.greenish), 0, 0);
-  });
-  document.getElementById("blackwhite").addEventListener("click", function(e) {
-    c.putImageData(process(effects.blackwhite), 0, 0);
-  });
-  document.getElementById("cold").addEventListener("click", function(e) {
-    c.putImageData(process(effects.cold), 0, 0);
-  });
-  document.getElementById("test").addEventListener("click", function(e) {
-    c.putImageData(process(effects.test), 0, 0);
+  
+  $('.effect').click(function() {
+    var name = this.id;
+    c.putImageData(process(effects[name]), 0, 0);
+    ui.nextStep();
   });
 
   var v = document.getElementById("v");
   v.addEventListener("loadedmetadata", function() {
-    canvas.width = 400;
-    canvas.height = 400;
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
     processed.width = v.videoWidth;
     processed.height = v.videoHeight;
     document.getElementById("take").addEventListener("click", function(e) {
@@ -440,19 +487,6 @@ require(['jquery'], function($) {
       v.style.display = "none";
       canvas.style.display = "inline-block";
 
-      temp.width = canvas.width;
-      temp.height = canvas.height
-      t.drawImage(mask, 0, 0, mask.width, mask.height, 0, 0, temp.width, temp.height);
-      var maskImage = t.getImageData(0,0, temp.width, temp.height).data;
-      var maskArr = Float32Array(maskImage.length/4);
-      for(var i = 0, j=0; i < maskImage.length; i+=4, j++) {
-        var r = maskImage[i];
-        var g = maskImage[i+1];
-        var b = maskImage[i+2];
-        var brightness = 1 - ((3*r+4*g+b)>>>3)/255;
-        maskArr[j] = brightness;
-      }
-      effects.test[1].param1 = maskArr;
       // effects.test[1].param1 = function() {
       //   return 0.5;
       // }
@@ -515,20 +549,37 @@ require(['jquery'], function($) {
     return;
   }
 
-  // If using Twitter Bootstrap, you need to require all the
-  // components that you use, like so:
-  // require('bootstrap/dropdown');
-  // require('bootstrap/alert');
+document.getElementById("twitter").addEventListener("click", share);
+// trigger me onclick
+function share() {
+  try {
+    var img = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
+  } catch(e) {
+    var img = canvas.toDataURL().split(',')[1];
+  }
+  // open the popup in the click handler so it will not be blocked
+  var w = window.open();
+  w.document.write('Sending the image in the internetz...');
+  // upload to imgur using jquery/CORS
+  // https://developer.mozilla.org/En/HTTP_access_control
+  $.ajax({
+    url: 'http://api.imgur.com/2/upload.json',
+    type: 'POST',
+    data: {
+      type: 'base64',
+      // get your key here, quick and fast http://imgur.com/register/api_anon
+      key: 'aa325d27b64d323ae34eba7b029b2d85',
+      name: '',
+      title: 'HIPSTAH',
+      caption: "I'm was filtering photos before it was mainstream",
+      image: img
+    },
+    dataType: 'json'
+  }).success(function(data) {
+    w.location.href = "https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: "+ data['upload']['links']['imgur_page'];
+  }).error(function() {
+    alert('Could not reach api.imgur.com. Sorry :(');
+    w.close();
+  });
+}
 });
-
-// Include the in-app payments API, and if it fails to load handle it
-// gracefully.
-// https://developer.mozilla.org/en/Apps/In-app_payments
-require(['https://marketplace-cdn.addons.mozilla.net/mozmarket.js'],
-        function() {},
-        function(err) {
-          global.mozmarket = global.mozmarket || {};
-          global.mozmarket.buy = function() {
-            alert('The in-app purchasing is currently unavailable.');
-          };
-        });
