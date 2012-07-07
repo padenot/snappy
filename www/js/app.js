@@ -417,6 +417,19 @@ require(['jquery'], function($) {
       return;
     }
     navigator.mozGetUserMedia({video: true}, successCallback, errorCallback);
+  } else if (navigator.webkitGetUserMedia) {
+    //navigator.getUserMedia('video', successCallback, errorCallback);
+    // Below is the latest syntax. Using the old syntax for the time being
+    // for backwards compatibility.
+    function successCallback(stream) {
+      document.getElementById("v").src = webkitURL.createObjectURL(stream);
+      document.getElementById("v").play();
+    }
+    function errorCallback(error) {
+      console.error('An error occurred: [CODE ' + error.code + ']');
+      return;
+    }
+    navigator.webkitGetUserMedia({video: true}, successCallback, errorCallback);
   } else {
     console.log('Native web camera streaming (getUserMedia) is not supported in this browser.');
     return;
