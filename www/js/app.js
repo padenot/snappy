@@ -12,6 +12,61 @@ require.config({
 
 var global = this;
 
+var filters = {
+  "blackwhite" : function(data, out, h, w) {
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i];
+      var g = data[i+1];
+      var b = data[i+2];
+      var brightness = (3*r+4*g+b)>>>3;
+      out[i] = brightness;
+      out[i+1] = brightness;
+      out[i+2] = brightness;
+    }
+  },
+  "sepia" : function(data, out, h, w) {
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i], g = data[i+1], b = data[i+2];
+      out[i] = (r * 0.393) + (g * 0.769) + (b * 0.189);
+      out[i+1] = (r * 0.349) + (g * 0.686) + (b * 0.168);
+      out[i+2] = (r * 0.272) + (g * 0.534) + (b * 0.131);
+    }
+  },
+  "constrast" : function(data, out, h, w, param) {
+    function contrast(f, param) {
+      return (f - 0.5) * param + 0.5;
+    }
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i], g = data[i+1], b = data[i+2];
+      out[i]   = 255 * contrast(r / 255, param);
+      out[i+1] = 255 * contrast(g / 255, param);
+      out[i+2] = 255 * contrast(b / 255, param);
+    }
+  },
+  "vignetting" : function(data, out, h, w, strength) {
+    function distance(x, y, cx, cy) {
+      return Math.sqrt(Math.abs(x - cx) + Math.abs(y - cy));
+    }
+    var maxDistance = distance(0, 0, w, h);
+    for(var i = 0, pix = 0; i < data.length; i+=4, pix++) {
+      var r = data[i], g = data[i+1], b = data[i+2];
+      var x = pix % w, y = pix / w;
+      var d = (maxDistance / strength - distance(x, y, w/2, h/2)) / maxDistance;
+      out[i]   = r * d;
+      out[i+1] = g * d;
+      out[i+2] = b * d;
+    }
+  },
+  "invert" : function(data, out, h, w) {
+    for(var i = 0; i < data.length; i+=4) {
+      var r = data[i], g = data[i+1], b = data[i+2];
+      out[i]   = 255 - r;
+      out[i+1] = 255 - g;
+      out[i+2] = 255 - b;
+    }
+  }
+}
+
 // When you write javascript in separate files, list them as
 // dependencies along with jquery
 require(['jquery'], function($) {
@@ -26,7 +81,6 @@ require(['jquery'], function($) {
     var c = canvas.getContext("2d");
     var p = processed.getContext("2d");
     document.getElementById("take").addEventListener("click", function(e) {
-      console.log(v.videoWidth + ' '+ v.videoHeight);
       canvas.width = v.videoWidth;
       canvas.height = v.videoHeight;
       c.drawImage(document.getElementById("v"),0,0,canvas.width,canvas.height);
@@ -34,74 +88,26 @@ require(['jquery'], function($) {
     });
     function process() {
       // Grab the pixel data from the backing canvas
-      console.log(canvas.width + ' '+ canvas.height);
       var idata = c.getImageData(0,0,canvas.width,canvas.height);
       var data = idata.data;
+      var iother = c.createImageData(idata);
+      var other = iother.data;
       var w = idata.width;
       var h = idata.height;
-      var limit = data.length
-      // B&W
-      //for(var i = 0; i < data.length; i+=4) {
-        //var r = data[i];
-        //var g = data[i+1];
-        //var b = data[i+2];
-        //var brightness = (3*r+4*g+b)>>>3;
-        //data[i] = brightness;
-        //data[i+1] = brightness;
-        //data[i+2] = brightness;
-      //}
-      // Sepia
-      for(var i = 0; i < data.length; i+=4) {
-        var r = data[i], g = data[i+1], b = data[i+2];
-        data[i] = (r * 0.393) + (g * 0.769) + (b * 0.189);
-        data[i+1] = (r * 0.349) + (g * 0.686) + (b * 0.168);
-        data[i+2] = (r * 0.272) + (g * 0.534) + (b * 0.131);
+      var limit = data.length;
+
+      for (var i = 0; i < other.length; i += 4) {
+        other[i+3] = 255;
       }
-      //
-      // Contrast [0, 2]
-      function contrast(f, param) {
-        return (f - 0.5) * param + 0.5;
-      }
-      for(var i = 0; i < data.length; i+=4) {
-        var r = data[i], g = data[i+1], b = data[i+2];
-        data[i]   = 255 * contrast(r / 255, 1.2);
-        data[i+1] = 255 * contrast(g / 255, 1.2);
-        data[i+2] = 255 * contrast(b / 255, 1.2);
-      }
-      // Inverse
-      //for(var i = 0; i < data.length; i+=4) {
-        //var r = data[i], g = data[i+1], b = data[i+2];
-        //data[i]   = 255 - r;
-        //data[i+1] = 255 - g;
-        //data[i+2] = 255 - b;
-      //}
-      // Vignetting
-      function distance(x, y, cx, cy) {
-        return Math.sqrt(Math.abs(x - cx) + Math.abs(y - cy));
-      }
-      var maxDistance = distance(0, 0, w, h);
-      for(var i = 0, pix = 0; i < data.length; i+=4, pix++) {
-        var r = data[i], g = data[i+1], b = data[i+2];
-        var x = pix % w, y = pix / w;
-        var d = (maxDistance - distance(x, y, w/2, h/2)) / maxDistance;
-        data[i]   = r * d;
-        data[i+1] = g * d;
-        data[i+2] = b * d;
-      }
+
+      filters.sepia(data, other, h, w);
+      filters.constrast(other, data, h, w, 1.7);
+      filters.vignetting(data, other, h, w, 1.1);
+
       processed.width = v.videoWidth;
       processed.height = v.videoHeight;
-      p.putImageData(idata,0,0);
+      p.putImageData(iother,0,0);
     }
-
-    // Convolution
-    for(var i = 0; i < data.length; i+=4) {
-      var r = data[i], g = data[i+1], b = data[i+2];
-      data[i]   = 255 - r;
-      data[i+1] = 255 - g;
-      data[i+2] = 255 - b;
-    }
-
-
   });
   if (navigator.mozGetUserMedia) {
     //navigator.getUserMedia('video', successCallback, errorCallback);
