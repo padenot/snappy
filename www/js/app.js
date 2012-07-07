@@ -506,3 +506,4 @@ function share() {
     w.close();
   });
 }
+});
