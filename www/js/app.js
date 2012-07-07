@@ -216,11 +216,23 @@ var filters = {
     for (var i = 0; i < w; i+=blockSize) {
       for (var j = 0; j < w; j+=blockSize) {
         var avg = [0,0,0];
+        for (var k = i; k < blockSize; k+=4) {
+          for (var l = j; l < blockSize; l+=4) {
+            avg[0] += data[k * blockSize + l];
+            avg[1] += data[k * blockSize + l + 1];
+            avg[2] += data[k * blockSize + l + 2];
+          }
+        }
+
+        avg[0] /= blockSize * blockSize;
+        avg[1] /= blockSize * blockSize;
+        avg[2] /= blockSize * blockSize;
+
         for (var k = i; k < blockSize; k++) {
-          for (var l = j; l < blockSize; l+=blockSize) {
-            avg[0] = data[k % blockSize + l];
-            avg[1] = data[k % blockSize + l];
-            avg[2] = data[k % blockSize + l];
+          for (var l = j; l < blockSize; l++) {
+            out[k * blockSize + l] = avg[0];
+            out[k * blockSize + l+1] = avg[1];
+            out[k * blockSize + l+2] = avg[2];
           }
         }
       }
@@ -294,6 +306,9 @@ var effects ={
     f:filters.gamma,
     param1: 1.1
   }
+  ],
+  pixelate: [
+    f:filters.pixelate
   ]
 };
 
@@ -376,6 +391,9 @@ require(['jquery'], function($) {
   });
   document.getElementById("hot").addEventListener("click", function(e) {
     c.putImageData(process(effects.hot), 0, 0);
+  });
+  document.getElementById("pixelate").addEventListener("click", function(e) {
+    c.putImageData(process(effects.pixelate), 0, 0);
   });
 
   var v = document.getElementById("v");
