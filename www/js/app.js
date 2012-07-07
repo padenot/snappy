@@ -316,15 +316,25 @@ require(['jquery'], function($) {
 
   var v = document.getElementById("v");
   v.addEventListener("loadedmetadata", function() {
-    canvas.width = v.videoWidth;
-    canvas.height = v.videoHeight;
     processed.width = v.videoWidth;
   processed.height = v.videoHeight;
     document.getElementById("take").addEventListener("click", function(e) {
       canvas.width = v.videoWidth;
       canvas.height = v.videoHeight;
-      c.drawImage(document.getElementById("v"),0,0,canvas.width,canvas.height);
-      original = c.getImageData(0,0,canvas.width,canvas.height);
+      // We want to crop the image to a square, because hipster love square
+      // photos.
+      var xOffset, yOffset, xSize, ySize;
+      if (canvas.height < canvas.width) {
+        xOffset = (canvas.width - canvas.height) / 2;
+        yOffset = 0;
+        xSize = ySize = canvas.height;
+      } else {
+        xOffset = (canvas.height - canvas.width) / 2;
+        yOffset = 0;
+        xSize = ySize = canvas.width;
+      }
+      c.drawImage(document.getElementById("v"),xOffset,yOffset,xSize,ySize, 0, 0, xSize, ySize);
+      original = c.getImageData(0,0,xSize,ySize);
       // stop the camera
       v.src = "";
       // Put the canvas instead of the video
