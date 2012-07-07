@@ -277,19 +277,80 @@ body {
   background: #444;
   color: #fafafa;
   font: 16px/1.5 Karla, "Helvetica Neue", Arial, Helvetica, sans-serif;
-  min-width: 320pxx;
-  padding: 20px;
+  min-width: 320px;
 }
 
-h1 {
+header {
   -moz-box-sizing: border-box;
+  background: #222;
+  padding: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-height: 100%;
+  width: 140px;
+}
+
+header h1 {
+  -moz-box-sizing: border-box;
+  background: #777;
+  font-size: 24px;
+  margin: -20px;
+  margin-bottom: 40px;
+  padding: 10px;
   text-align: center;
+}
+
+header #steps {
   margin-bottom: 20px;
+  text-align: center;
+}
+
+header #steps .step {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+header #steps .step .number {
+  background: #777;
+  border-radius: 25px;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 50px;
+  margin: 0 auto 5px;
+  position: relative;
+  text-align: center;
+  width: 50px;
+  height: 50px;
+}
+
+header #steps .step.active .number:after {
+  right: -45px;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-right-color: #444;
+  border-width: 30px;
+  top: 50%;
+  margin-top: -30px;
+}
+
+header #steps .step.active .number {
+  background: #fafafa;
+  color: #222;
+}
+
+#content {
+  -moz-box-sizing: border-box;
+  padding: 20px;
+  margin-left: 140px;
 }
 
 #v {
   -moz-box-sizing: border-box;
-  border: 10px solid #fff;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
   display: block;
   margin: 0 auto;
@@ -301,7 +362,7 @@ h1 {
   background: #ffe300;
   border: 0;
   border-radius: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px rgba(255, 255, 255, 0.2);
   display: block;
   font: bold 14px/1  Karla, "Helvetica Neue", Arial, Helvetica, sans-serif;
   letter-spacing: 1px;
@@ -324,25 +385,52 @@ h1 {
   top: 4px;
 }
 
-#filters {
-  background: #444;
+#effects {
+  background: #222;
   color: #fff;
+  display: none;
   text-align: center;
-  padding: 10px;
+  padding: 5px;
 }
 
-#filters .filter {
+#effects .effect {
   display: inline-block;
-  margin: 0 10px 10px 0;
+  margin: 5px;
   width: 90px;
 }
 
-#filters .filter .thumb {
+#effects .effect .thumb {
   border: 5px solid #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   margin-bottom: 5px;
 }
 
-#filters .filter .name {
+#effects .effect .name {
   margin: 0;
+}
+
+#share .provider {
+  -moz-box-sizing: border-box;
+  -moz-transition: background 0.25s ease-out;
+  background: #ffe300;
+  border: 0;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px rgba(255, 255, 255, 0.2);
+  display: block;
+  font: bold 24px/1 Karla, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  letter-spacing: 1px;
+  margin: 20px auto;
+  padding: 10px 30px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 200px;
+  display: none;
+}
+
+#share .provider#facebook {
+  background: #25549c;
+}
+
+#share .provider#twitter {
+  background: #00b2f4;
 }

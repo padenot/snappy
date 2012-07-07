@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 
-    <title>Boot to Instagram</title>
+    <title>Snappy</title>
     <meta name="description" content="">
 
     <!-- Mobile viewport optimized: h5bp.com/viewport -->
@@ -46,21 +46,45 @@
     <canvas id=c></canvas>
     <canvas id=p></canvas> -->
 
-    <h1>Boot to Instagram</h1>
+    <header>
+        <h1>Snappy</h1>
 
-    <img src="http://placehold.it/400x400" id="v">
+        <div id="steps">
+            <div class="step active">
+                <div class="number">1</div>
+                <div class="name">Take a picture</div>
+            </div>
+            <div class="step">
+                <div class="number">2</div>
+                <div class="name">Add effects</div>
+            </div>
+            <div class="step">
+                <div class="number">3</div>
+                <div class="name">Share your creation</div>
+            </div>
+        </div>
+    </header>
 
-    <button id="take" class="ss-camera">Take a picture</button>
+    <div id="content">
+        <img src="http://placehold.it/400x400" id="v">
 
-    <div id="filters">
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
-        <div class="filter"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Filter Name</p></div>
+        <button id="take" class="ss-camera">Take a picture</button>
+
+        <div id="effects">
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+        </div>
+
+        <div id="share">
+            <div class="provider" id="facebook">Share</div>
+            <div class="provider" id="twitter">Tweet</div>
+        </div>
     </div>
 
     <!-- JavaScript at the bottom for fast page loading: http://developer.yahoo.com/performance/rules.html#js_bottom -->
