@@ -521,7 +521,7 @@ function share() {
     alert('Could not reach api.imgur.com. Sorry :(');
     w.close();
   });
-}
+});
 
 // Include the in-app payments API, and if it fails to load handle it
 // gracefully.
