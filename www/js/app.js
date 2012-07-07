@@ -306,10 +306,7 @@ var ui = {
   colors: ['#900', '#06c', '#360'],
 
   init: function() {
-    var self = this;
-    $('#take').click(function() {
-      self.nextStep();
-    });
+    this.initCapture();
   },
 
   nextStep: function() {
@@ -324,7 +321,30 @@ var ui = {
     var stepEl = $(stepEls[this.step]);
     stepEl.addClass('active');
 
+    switch (this.step) {
+      case 1: this.initEffects(); break;
+      case 2: this.initShare(); break;
+    }
+
     return true;
+  },
+
+  initCapture: function() {
+    var self = this;
+    $('#take').click(function() {
+      self.nextStep();
+    });
+    $('#effects').hide();
+  },
+
+  initEffects: function() {
+    $('#take').hide();
+    $('#effects').show();
+  },
+
+  initShare: function() {
+    $('#take').hide();
+    $('#effects').hide();
   }
 }
 
@@ -464,18 +484,32 @@ require(['jquery'], function($) {
       p.putImageData(iother,0,0);
     }
   });
-  navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-  window.URL = window.URL || window.webkitURL;
-  if (navigator.getUserMedia) {
+  if (navigator.mozGetUserMedia) {
+    //navigator.getUserMedia('video', successCallback, errorCallback);
+    // Below is the latest syntax. Using the old syntax for the time being
+    // for backwards compatibility.
     function successCallback(stream) {
-      document.getElementById("v").src = URL.createObjectURL(stream);
+      document.getElementById("v").src = stream;
       document.getElementById("v").play();
     }
     function errorCallback(error) {
       console.error('An error occurred: [CODE ' + error.code + ']');
       return;
     }
-    navigator.getUserMedia({video: true}, successCallback, errorCallback);
+    navigator.mozGetUserMedia({video: true}, successCallback, errorCallback);
+  } else if (navigator.webkitGetUserMedia) {
+    //navigator.getUserMedia('video', successCallback, errorCallback);
+    // Below is the latest syntax. Using the old syntax for the time being
+    // for backwards compatibility.
+    function successCallback(stream) {
+      document.getElementById("v").src = webkitURL.createObjectURL(stream);
+      document.getElementById("v").play();
+    }
+    function errorCallback(error) {
+      console.error('An error occurred: [CODE ' + error.code + ']');
+      return;
+    }
+    navigator.webkitGetUserMedia({video: true}, successCallback, errorCallback);
   } else {
     console.log('Native web camera streaming (getUserMedia) is not supported in this browser.');
     return;

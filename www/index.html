@@ -59,12 +59,19 @@
 
     <div id="content">
         <!-- <img src="http://placehold.it/400x400" id="v"> -->
-        <div id="photo-crop">
-            <span>
-                <video id="v" class="framed" width="530" height="400" autoplay></video>
-                <canvas id="c" class="framed" style="display:none"></canvas>
-                <canvas id="p" class="hidden"></canvas> 
-            </span>
+        <div id="photo-area">
+            <div id="photo-crop">
+                <span>
+                    <video id="v" class="framed" width="530" height="400" autoplay></video>
+                    <canvas id="c" class="framed" style="display:none"></canvas>
+                    <canvas id="p" class="hidden"></canvas> 
+                </span>
+            </div>
+            <ul id="effects">
+                <li class="effect" id="greenish">Greenish</li>
+                <li class="effect" id="blackwhite">B&amp;W</li>
+                <li class="effect" id="cold">Cold</li>
+            </ul>
         </div>
         <canvas id="t" style="display:none"></canvas>
 
