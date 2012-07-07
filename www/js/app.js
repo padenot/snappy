@@ -404,32 +404,18 @@ require(['jquery'], function($) {
       p.putImageData(iother,0,0);
     }
   });
-  if (navigator.mozGetUserMedia) {
-    //navigator.getUserMedia('video', successCallback, errorCallback);
-    // Below is the latest syntax. Using the old syntax for the time being
-    // for backwards compatibility.
+  navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+  window.URL = window.URL || window.webkitURL;
+  if (navigator.getUserMedia) {
     function successCallback(stream) {
-      document.getElementById("v").src = stream;
+      document.getElementById("v").src = URL.createObjectURL(stream);
       document.getElementById("v").play();
     }
     function errorCallback(error) {
       console.error('An error occurred: [CODE ' + error.code + ']');
       return;
     }
-    navigator.mozGetUserMedia({video: true}, successCallback, errorCallback);
-  } else if (navigator.webkitGetUserMedia) {
-    //navigator.getUserMedia('video', successCallback, errorCallback);
-    // Below is the latest syntax. Using the old syntax for the time being
-    // for backwards compatibility.
-    function successCallback(stream) {
-      document.getElementById("v").src = webkitURL.createObjectURL(stream);
-      document.getElementById("v").play();
-    }
-    function errorCallback(error) {
-      console.error('An error occurred: [CODE ' + error.code + ']');
-      return;
-    }
-    navigator.webkitGetUserMedia({video: true}, successCallback, errorCallback);
+    navigator.getUserMedia({video: true}, successCallback, errorCallback);
   } else {
     console.log('Native web camera streaming (getUserMedia) is not supported in this browser.');
     return;
