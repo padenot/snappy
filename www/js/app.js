@@ -316,30 +316,30 @@ require(['jquery'], function($) {
 
   var v = document.getElementById("v");
   v.addEventListener("loadedmetadata", function() {
+    canvas.width = 400;
+    canvas.height = 400;
     processed.width = v.videoWidth;
-  processed.height = v.videoHeight;
+    processed.height = v.videoHeight;
     document.getElementById("take").addEventListener("click", function(e) {
-      canvas.width = v.videoWidth;
-      canvas.height = v.videoHeight;
       // We want to crop the image to a square, because hipster love square
       // photos.
       var xOffset, yOffset, xSize, ySize;
-      if (canvas.height < canvas.width) {
-        xOffset = (canvas.width - canvas.height) / 2;
+      if (v.videoHeight < v.videoWidth) {
+        xOffset = (v.videoWidth - v.videoHeight) / 2;
         yOffset = 0;
-        xSize = ySize = canvas.height;
+        xSize = ySize = v.videoHeight;
       } else {
-        xOffset = (canvas.height - canvas.width) / 2;
+        xOffset = (v.videoHeight - v.videoWidth) / 2;
         yOffset = 0;
-        xSize = ySize = canvas.width;
+        xSize = ySize = v.videoWidth;
       }
-      c.drawImage(document.getElementById("v"),xOffset,yOffset,xSize,ySize, 0, 0, xSize, ySize);
-      original = c.getImageData(0,0,xSize,ySize);
+      c.drawImage(document.getElementById("v"),xOffset, yOffset ,xSize ,ySize , 0, 0, canvas.width, canvas.height);
+      original = c.getImageData(0,0, canvas.width, canvas.height);
       // stop the camera
       v.src = "";
       // Put the canvas instead of the video
       v.style.display = "none";
-      canvas.style.display = "block";
+      canvas.style.display = "inline-block";
     });
     function process() {
       // Grab the pixel data from the backing canvas
