@@ -263,6 +263,13 @@ var effects ={
     param1:0.75,
     param2:1
   }
+  ],
+  hot: [
+    {
+    f:filters.tint,
+    param1:0.1666,
+    param2:1
+  }
   ]
 };
 
@@ -312,6 +319,9 @@ require(['jquery'], function($) {
   });
   document.getElementById("cold").addEventListener("click", function(e) {
     c.putImageData(process(effects.cold), 0, 0);
+  });
+  document.getElementById("hot").addEventListener("click", function(e) {
+    c.putImageData(process(effects.hot), 0, 0);
   });
 
   var v = document.getElementById("v");
