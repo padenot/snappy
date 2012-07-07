@@ -64,6 +64,57 @@ var filters = {
       out[i+1] = 255 - g;
       out[i+2] = 255 - b;
     }
+  },
+  convolution: function(data, out, sh, sw, op) {
+    var opSize = Math.round(Math.sqrt(op.length));
+    var opHalfSize = Math.floor(opSize/2);
+
+    var w = sw;
+    var h = sh;
+
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var outOffset = (y*w+x)*4;
+        var newR=0, newG=0, newB=0, newA=0;
+        for (var oy=0; oy<opSize; oy++) {
+          for (var ox=0; ox<opSize; ox++) {
+            var curY = y+oy-opHalfSize;
+            var curX = x+ox-opHalfSize;
+            if (curY >= 0 && curY < h && curX >= 0 && curX < w) {
+              var curOffset = (curY*w+curX)*4;
+              var curOp = op[oy*opSize+ox];
+              newR += data[curOffset]*curOp;
+              newG += data[curOffset+1]*curOp;
+              newB += data[curOffset+2]*curOp;
+              newA += data[curOffset+3]*curOp;
+            }
+          }
+        }
+        out[outOffset] = newR;
+        out[outOffset+1] = newG;
+        out[outOffset+2] = newB;
+        out[outOffset+3] = newA;
+      }
+    }
+  }
+}
+
+var convolutions = {
+  gaussian: function(delta) {
+    var d2 = delta*delta;
+    function g(x, y) {
+      return (1/(2*Math.PI*d2))*Math.exp(-(x*x+y*y)/(2*d2));
+    }
+
+    var size = Math.ceil(6*delta+1);
+    var halfSize = Math.floor(size/2);
+    var out = [];
+    for (var y=0; y<size; y++) {
+      for (var x=0; x<size; x++) {
+        out.push(g(x-halfSize, y-halfSize));
+      }
+    }
+    return out;
   }
 }
 
@@ -100,9 +151,10 @@ require(['jquery'], function($) {
         other[i+3] = 255;
       }
 
-      filters.sepia(data, other, h, w);
-      filters.constrast(other, data, h, w, 1.7);
-      filters.vignetting(data, other, h, w, 1.1);
+      // filters.sepia(data, other, h, w);
+      // filters.constrast(other, data, h, w, 1.7);
+      // filters.vignetting(data, other, h, w, 1.1);
+      filters.convolution(data, other, h, w, convolutions.gaussian(3));
 
       processed.width = v.videoWidth;
       processed.height = v.videoHeight;
