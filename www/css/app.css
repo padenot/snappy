@@ -381,6 +381,7 @@ header #steps .step.active .number {
   width: 400px;
   height: 400px;
   text-align: center;
+  z-index: 1;
 }
 
 #photo-crop span {
@@ -438,13 +439,15 @@ header #steps .step.active .number {
   color: #fff;
   list-style: none;
   position: absolute;
-  right: -170px;
+  left: 340px;
   top: 0;
   text-shadow: 0 1px rgba(255, 255, 255, 0.4);
-  z-index: -1;
 }
 
 #effects .effect {
+  -moz-transition: margin-left 0.1s ease-out;
+  -webkit-transition: margin-left 0.1s ease-out;
+  transition: margin-left 0.1s ease-out;
   background: #ffe300;
   border-radius: 0 5px 5px 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -457,8 +460,10 @@ header #steps .step.active .number {
 }
 
 #effects .effect:hover {
-  background: red;
-  margin-left: -20px;
+  -moz-transition: margin-left 0.1s ease-in;
+  -webkit-transition: margin-left 0.1s ease-in;
+  transition: margin-left 0.1s ease-in;
+  margin-left: 20px;
 }
 
 #share .provider {

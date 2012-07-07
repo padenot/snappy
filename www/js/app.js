@@ -300,7 +300,7 @@ var ui = {
     $('#take').click(function() {
       self.nextStep();
     });
-    // $('#effects').hide();
+    $('#effects').hide();
   },
 
   initEffects: function() {
