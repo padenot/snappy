@@ -38,14 +38,6 @@
     <script src="js/lib/modernizr-2.5.3.min.js"></script>
   </head>
   <body>
-
-    <!-- Add your site or application content here -->
-
-<!--     <video id=v width=320 height=240 autoplay>
-    </video>
-    <canvas id=c></canvas>
-    <canvas id=p></canvas> -->
-
     <header>
         <h1>Snappy</h1>
 
@@ -66,14 +58,17 @@
     </header>
 
     <div id="content">
-        <img src="http://placehold.it/400x400" id="v">
+        <!-- <img src="http://placehold.it/400x400" id="v"> -->
+        <video id="v" class="framed" width="400" height="400" autoplay></video>
+        <canvas id="c" class="framed" style="display:none"></canvas>
+        <canvas id="p" class="hidden"></canvas> 
 
         <button id="take" class="ss-camera">Take a picture</button>
 
         <div id="effects">
-            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
-            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
-            <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
+            <div class="effect" id=greenish><img src="http://placehold.it/80x80" class="thumb"><p class="name">Greenish</p></div>
+            <div class="effect" id=blackwhite><img src="http://placehold.it/80x80" class="thumb"><p class="name">B&amp;W</p></div>
+            <div class="effect" id=cold><img src="http://placehold.it/80x80" class="thumb"><p class="name">Cold</p></div>
             <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
             <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
             <div class="effect"><img src="http://placehold.it/80x80" class="thumb"><p class="name">Effect Name</p></div>
@@ -85,7 +80,6 @@
             <div class="provider" id="facebook">Share</div>
             <div class="provider" id="twitter">Tweet</div>
         </div>
-    </div>
 
     <!-- JavaScript at the bottom for fast page loading: http://developer.yahoo.com/performance/rules.html#js_bottom -->
 
