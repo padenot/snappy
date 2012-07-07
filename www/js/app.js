@@ -210,33 +210,6 @@ var filters = {
         out[i+3] = newAmount*out[i+3] + origAmount*data[i+3];
       }
     }
-  },
-  pixelate: function(data, out, h, w) {
-    var blockSize = w / 20;
-    for (var i = 0; i < w; i+=blockSize) {
-      for (var j = 0; j < w; j+=blockSize) {
-        var avg = [0,0,0];
-        for (var k = i; k < blockSize; k+=4) {
-          for (var l = j; l < blockSize; l+=4) {
-            avg[0] += data[k * blockSize + l];
-            avg[1] += data[k * blockSize + l + 1];
-            avg[2] += data[k * blockSize + l + 2];
-          }
-        }
-
-        avg[0] /= blockSize * blockSize;
-        avg[1] /= blockSize * blockSize;
-        avg[2] /= blockSize * blockSize;
-
-        for (var k = i; k < blockSize; k++) {
-          for (var l = j; l < blockSize; l++) {
-            out[k * blockSize + l] = avg[0];
-            out[k * blockSize + l+1] = avg[1];
-            out[k * blockSize + l+2] = avg[2];
-          }
-        }
-      }
-    }
   }
 }
 
@@ -308,7 +281,9 @@ var effects ={
   }
   ],
   pixelate: [
+    {
     f:filters.pixelate
+  }
   ]
 };
 
@@ -460,7 +435,7 @@ require(['jquery'], function($) {
   window.URL = window.URL || window.webkitURL;
   if (navigator.getUserMedia) {
     function successCallback(stream) {
-      document.getElementById("v").src = URL.createObjectURL(stream);
+      document.getElementById("v").src = stream;
       document.getElementById("v").play();
     }
     function errorCallback(error) {
