@@ -382,12 +382,6 @@ require(['jquery'], function($) {
     }
   }
 
-  $('.effect').click(function() {
-    var name = this.id;
-    c.putImageData(process(effects[name]), 0, 0);
-    ui.nextStep();
-  });
-
   var v = document.getElementById("v");
   v.addEventListener("loadedmetadata", function() {
     canvas.width = 400;
