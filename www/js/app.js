@@ -473,11 +473,6 @@ require(['jquery'], function($) {
     return;
   }
 
-  // If using Twitter Bootstrap, you need to require all the
-  // components that you use, like so:
-  // require('bootstrap/dropdown');
-  // require('bootstrap/alert');
-
 document.getElementById("twitter").addEventListener("click", share);
 // trigger me onclick
 function share() {
@@ -510,16 +505,4 @@ function share() {
     alert('Could not reach api.imgur.com. Sorry :(');
     w.close();
   });
-});
-
-// Include the in-app payments API, and if it fails to load handle it
-// gracefully.
-// https://developer.mozilla.org/en/Apps/In-app_payments
-require(['https://marketplace-cdn.addons.mozilla.net/mozmarket.js'],
-        function() {},
-        function(err) {
-          global.mozmarket = global.mozmarket || {};
-          global.mozmarket.buy = function() {
-            alert('The in-app purchasing is currently unavailable.');
-          };
-        });
+}
