@@ -273,10 +273,40 @@ var effects ={
   ]
 };
 
+var ui = {
+  step: 0,
+
+  colors: ['#900', '#06c', '#360'],
+
+  init: function() {
+    var self = this;
+    $('#take').click(function() {
+      self.nextStep();
+    });
+  },
+
+  nextStep: function() {
+    if (this.step >= 2) return false;
+    this.step++;
+
+    var header = $('header');
+    header.css('background', this.colors[this.step]);
+
+    var stepEls = $('.step');
+    stepEls.removeClass('active');
+    var stepEl = $(stepEls[this.step]);
+    stepEl.addClass('active');
+
+    return true;
+  }
+}
 
 // When you write javascript in separate files, list them as
 // dependencies along with jquery
 require(['jquery'], function($) {
+  
+  ui.init();
+
   var canvas = document.getElementById("c");
   var processed = document.getElementById("p");
   var c = canvas.getContext("2d");

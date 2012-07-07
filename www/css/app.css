@@ -282,7 +282,10 @@ body {
 
 header {
   -moz-box-sizing: border-box;
-  background: #222;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background: #900;
+  box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.4);
   padding: 20px;
   position: absolute;
   left: 0;
@@ -293,7 +296,8 @@ header {
 
 header h1 {
   -moz-box-sizing: border-box;
-  background: #777;
+  background: #222;
+  box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.4);
   font-size: 24px;
   margin: -20px;
   margin-bottom: 40px;
@@ -312,7 +316,7 @@ header #steps .step {
 }
 
 header #steps .step .number {
-  background: #777;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 25px;
   font-size: 24px;
   font-weight: bold;
@@ -324,7 +328,7 @@ header #steps .step .number {
   height: 50px;
 }
 
-header #steps .step.active .number:after {
+header #steps .step.active .number:after, header #steps .step.active .number:before {
   right: -45px;
   border: solid transparent;
   content: " ";
@@ -332,10 +336,21 @@ header #steps .step.active .number:after {
   width: 0;
   position: absolute;
   pointer-events: none;
+}
+
+header #steps .step.active .number:after {
   border-right-color: #444;
   border-width: 30px;
   top: 50%;
   margin-top: -30px;
+}
+
+header #steps .step.active .number:before {
+  border-right-color: rgba(0, 0, 0, 0.4);
+  border-width: 33px;
+  top: 50%;
+  right: -40px;
+  margin-top: -33px;
 }
 
 header #steps .step.active .number {
@@ -344,13 +359,13 @@ header #steps .step.active .number {
 }
 
 #content {
-  -moz-box-sizing: border-box;
+  -moz-box-sizing: border-box;  -webkit-box-sizing: border-box;
   padding: 20px;
   margin-left: 140px;
 }
 
 #photo-crop {
-  -moz-box-sizing: border-box;
+  -moz-box-sizing: border-box;  box-sizing: border-box;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
   display: block;
   margin: 0 auto;
@@ -379,7 +394,11 @@ header #steps .step.active .number {
 
 #take {
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   -moz-transition: background 0.25s ease-out;
+  -webkit-transition: background 0.25s ease-out;
+  transition: background 0.25s ease-out;
   background: #ffe300;
   border: 0;
   border-radius: 3px;
@@ -396,6 +415,8 @@ header #steps .step.active .number {
 
 #take:hover {
   -moz-transition: background 0.25s ease-in;
+  -webkit-transition: background 0.25s ease-in;
+  transition: background 0.25s ease-in;
   background: #fff288;
 }
 
@@ -431,7 +452,11 @@ header #steps .step.active .number {
 
 #share .provider {
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   -moz-transition: background 0.25s ease-out;
+  -webkit-transition: background 0.25s ease-out;
+  transition: background 0.25s ease-out;
   background: #ffe300;
   border: 0;
   border-radius: 3px;
