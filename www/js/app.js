@@ -171,74 +171,102 @@ var filters = {
   }
 }
 
+var effects ={
+  greenish: [
+    {
+    f: filters.contrast,
+    param1: 1.7
+  }, {
+    f: filters.vignetting,
+    param1: 1.1
+  }, {
+    f: filters.tint,
+    param1: 0.1,
+    param2: 1
+  }, {
+    f: filters.gamma,
+    param1: 1.4,
+  }
+  ],
+  blackwhite: [
+    {
+    f: filters.blackwhite
+  }
+  ],
+  cold: [
+    {
+    f:filters.tint,
+    param1:0.75,
+    param2:2
+  }
+  ]
+};
+
+
 // When you write javascript in separate files, list them as
 // dependencies along with jquery
 require(['jquery'], function($) {
+  var canvas = document.getElementById("c");
+  var processed = document.getElementById("p");
+  var c = canvas.getContext("2d");
+  var p = processed.getContext("2d");
+  var original = null;
+  function process(effect) {
+    var idata = original;
+    var data = idata.data;
+    var iother = c.createImageData(idata);
+    var other = iother.data;
+    var w = idata.width;
+    var h = idata.height;
+    var limit = data.length;
+
+    // Set the alpha to opaque.
+    for (var i = 0; i < other.length; i += 4) {
+      other[i+3] = 255;
+    }
+
+    var input = data,
+    out = other;
+    for (var i = 0; i < effect.length; i++) {
+      effect[i].f(input, out, h, w, effect[i].param1, effect[i].param2);
+      var tmp = input;
+      input = out;
+      out = tmp;
+    }
+    if (effect.length % 2) {
+      return iother;
+    } else {
+      return idata;
+    }
+  }
+
+  document.getElementById("greenish").addEventListener("click", function(e) {
+    c.putImageData(process(effects.greenish), 0, 0);
+  });
+  document.getElementById("blackwhite").addEventListener("click", function(e) {
+    c.putImageData(process(effects.blackwhite), 0, 0);
+  });
+  document.getElementById("cold").addEventListener("click", function(e) {
+    c.putImageData(process(effects.cold), 0, 0);
+  });
+
   var v = document.getElementById("v");
   v.addEventListener("loadedmetadata", function() {
-    var canvas = document.getElementById("c");
-    var processed = document.getElementById("p");
     canvas.width = v.videoWidth;
     canvas.height = v.videoHeight;
     processed.width = v.videoWidth;
-    processed.height = v.videoHeight;
-    var c = canvas.getContext("2d");
-    var p = processed.getContext("2d");
+  processed.height = v.videoHeight;
     document.getElementById("take").addEventListener("click", function(e) {
       canvas.width = v.videoWidth;
       canvas.height = v.videoHeight;
       c.drawImage(document.getElementById("v"),0,0,canvas.width,canvas.height);
-      process();
+      original = c.getImageData(0,0,canvas.width,canvas.height);
+      // stop the camera
+      v.src = "";
+      // Put the canvas instead of the video
+      v.style.display = "none";
+      canvas.style.display = "block";
     });
-    function process() {
-      // Grab the pixel data from the backing canvas
-      var idata = c.getImageData(0,0,canvas.width,canvas.height);
-      var data = idata.data;
-      var iother = c.createImageData(idata);
-      var other = iother.data;
-      var w = idata.width;
-      var h = idata.height;
-      var limit = data.length;
-
-      var effect = [
-        {
-          f: filters.contrast,
-          param1: 1.7
-        }, {
-          f: filters.vignetting,
-          param1: 1.1
-        }, {
-          f: filters.tint,
-          param1: 0.1,
-          param2: 1
-        }, {
-          f: filters.gamma,
-          param1: 1.4,
-        }
-      ];
-
-      for (var i = 0; i < other.length; i += 4) {
-        other[i+3] = 255;
-      }
-
-      var input = data,
-          out = other;
-      for (var i = 0; i < effect.length; i++) {
-        effect[i].f(input, out, h, w, effect[i].param1, effect[i].param2);
-        var tmp = input;
-        input = out;
-        out = tmp;
-      }
-
-      //filters.sepia(data, other, h, w);
-      //filters.constrast(other, data, h, w, 1.7);
-      //filters.vignetting(data, other, h, w, 1.1);
-      //filters.tint(other, data, h, w, 0.1, 1);
-
-      processed.width = v.videoWidth;
-      processed.height = v.videoHeight;
-      p.putImageData(idata, 0, 0);
-    }
   });
   if (navigator.mozGetUserMedia) {
     //navigator.getUserMedia('video', successCallback, errorCallback);
