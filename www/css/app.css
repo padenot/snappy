@@ -271,3 +271,78 @@ td { vertical-align: top; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 }
+
+/* App Styles */
+body {
+  background: #444;
+  color: #fafafa;
+  font: 16px/1.5 Karla, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  min-width: 320pxx;
+  padding: 20px;
+}
+
+h1 {
+  -moz-box-sizing: border-box;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#v {
+  -moz-box-sizing: border-box;
+  border: 10px solid #fff;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+  display: block;
+  margin: 0 auto;
+}
+
+#take {
+  -moz-box-sizing: border-box;
+  -moz-transition: background 0.25s ease-out;
+  background: #ffe300;
+  border: 0;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px rgba(255, 255, 255, 0.4);
+  display: block;
+  font: bold 14px/1  Karla, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  letter-spacing: 1px;
+  margin: 20px auto;
+  padding: 10px 30px;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.4);
+}
+
+#take:hover {
+  -moz-transition: background 0.25s ease-in;
+  background: #fff288;
+}
+
+#take:before {
+  font-size: 18px;
+  margin-right: 10px;
+  position: relative;
+  top: 4px;
+}
+
+#filters {
+  background: #444;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+}
+
+#filters .filter {
+  display: inline-block;
+  margin: 0 10px 10px 0;
+  width: 90px;
+}
+
+#filters .filter .thumb {
+  border: 5px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  margin-bottom: 5px;
+}
+
+#filters .filter .name {
+  margin: 0;
+}
