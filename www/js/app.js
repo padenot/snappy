@@ -96,6 +96,19 @@ var filters = {
         out[outOffset+3] = newA;
       }
     }
+  },
+  mask: function(data, out, h, w, maskFunction) {
+    for (var y=0; y<h; y++) {
+      for (var x=0; x<w; x++) {
+        var i = (y*w+x)*4;
+        var newAmount = maskFunction(x,y);
+        var origAmount = 1-newAmount;
+        out[i] = newAmount*out[i] + origAmount*data[i];
+        out[i+1] = newAmount*out[i+1] + origAmount*data[i+1];
+        out[i+2] = newAmount*out[i+2] + origAmount*data[i+2];
+        out[i+3] = newAmount*out[i+3] + origAmount*data[i+3];
+      }
+    }
   }
 }
 
@@ -154,7 +167,16 @@ require(['jquery'], function($) {
       // filters.sepia(data, other, h, w);
       // filters.constrast(other, data, h, w, 1.7);
       // filters.vignetting(data, other, h, w, 1.1);
-      filters.convolution(data, other, h, w, convolutions.gaussian(3));
+      // filters.convolution(data, other, h, w, convolutions.gaussian(3));
+      function m(x,y) {
+        if (y < 500) {
+          return 1-y/500;
+        } else {
+          return 0;
+        }
+      }
+      filters.blackwhite(data, other, h, w);
+      filters.mask(data, other, h, w, m);
 
       processed.width = v.videoWidth;
       processed.height = v.videoHeight;
