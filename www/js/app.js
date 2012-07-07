@@ -12,6 +12,10 @@ require.config({
 
 var global = this;
 
+function uploadImgur() {
+  var key = "aa325d27b64d323ae34eba7b029b2d85";
+}
+
 function rgb2hsv(r, g, b){
     r = r/255, g = g/255, b = b/255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -151,11 +155,8 @@ var filters = {
       hsv = rgb2hsv(r, g, b);
 
       var h = hsv[0];
-      //alert(h);
       if (h > color) {
-        //alert("h: " + ( h - color ));
-        h -= (h - color) * strength;
-        //alert("h: " + h);
+        h -= Math.abs(h - color) * strength;
       } else {
         h += Math.abs(h - color) * strength;
       }
@@ -245,8 +246,8 @@ var effects ={
     param1: 1.1
   }, {
     f: filters.tint,
-    param1: 0.1,
-    param2: 1
+    param1: 0.33,
+    param2: 0.8
   }, {
     f: filters.gamma,
     param1: 1.4,
@@ -260,8 +261,32 @@ var effects ={
   cold: [
     {
     f:filters.tint,
-    param1:0.75,
+    param1:0.66,
     param2:1
+  },
+  {
+    f:filters.saturate,
+    param1:0.6
+  }
+  ],
+  hot: [
+    {
+    f:filters.tint,
+    param1:0.1,
+    param2:1
+  },
+  {
+    f: filters.contrast,
+    param1: 1.4
+  },
+  {
+    f:filters.gamma,
+    param1: 1.1
+  }
+  ],
+  pixelate: [
+    {
+    f:filters.pixelate
   }
   ]
 };
@@ -458,7 +483,40 @@ require(['jquery'], function($) {
   // components that you use, like so:
   // require('bootstrap/dropdown');
   // require('bootstrap/alert');
-});
+
+document.getElementById("twitter").addEventListener("click", share);
+// trigger me onclick
+function share() {
+  try {
+    var img = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
+  } catch(e) {
+    var img = canvas.toDataURL().split(',')[1];
+  }
+  // open the popup in the click handler so it will not be blocked
+  var w = window.open();
+  w.document.write('Sending the image in the internetz...');
+  // upload to imgur using jquery/CORS
+  // https://developer.mozilla.org/En/HTTP_access_control
+  $.ajax({
+    url: 'http://api.imgur.com/2/upload.json',
+    type: 'POST',
+    data: {
+      type: 'base64',
+      // get your key here, quick and fast http://imgur.com/register/api_anon
+      key: 'aa325d27b64d323ae34eba7b029b2d85',
+      name: '',
+      title: 'HIPSTAH',
+      caption: "I'm was filtering photos before it was mainstream",
+      image: img
+    },
+    dataType: 'json'
+  }).success(function(data) {
+    w.location.href = "https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: "+ data['upload']['links']['imgur_page'];
+  }).error(function() {
+    alert('Could not reach api.imgur.com. Sorry :(');
+    w.close();
+  });
+}
 
 // Include the in-app payments API, and if it fails to load handle it
 // gracefully.
