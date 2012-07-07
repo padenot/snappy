@@ -168,7 +168,18 @@ var filters = {
       out[i+1] = rgb[1];
       out[i+2] = rgb[2];
     }
-    },
+  },
+  color: function(data, out, h, w, color) {
+    if (color.length === 3) {
+      color.push(255);
+    }
+    for (var i = 0; i < data.length; i+=4) {
+      out[i] = color[0];
+      out[i+1] = color[1];
+      out[i+2] = color[2];
+      out[i+3] = color[3];
+    }
+  },
   convolution: function(data, out, sh, sw, op) {
     var opSize = Math.round(Math.sqrt(op.length));
     var opHalfSize = Math.floor(opSize/2);
@@ -201,11 +212,18 @@ var filters = {
       }
     }
   },
-  mask: function(data, out, h, w, maskFunction) {
+  mask: function(data, out, h, w, m) {
+    console.log(h + " " + w);
+    if (typeof m === 'object') {
+      var img = m;
+      m = function(x,y) {
+        return img[y*w+x];
+      }
+    }
     for (var y=0; y<h; y++) {
       for (var x=0; x<w; x++) {
         var i = (y*w+x)*4;
-        var newAmount = maskFunction(x,y);
+        var newAmount = m(x,y);
         var origAmount = 1-newAmount;
         out[i] = newAmount*out[i] + origAmount*data[i];
         out[i+1] = newAmount*out[i+1] + origAmount*data[i+1];
@@ -235,34 +253,50 @@ var convolutions = {
   }
 }
 
+function setEffectDefaults(effect) {
+  if (typeof effect.flipNext === 'undefined') {
+    effect.flipNext = true;
+  }
+}
+
 var effects ={
   greenish: [
     {
-    f: filters.contrast,
-    param1: 1.7
-  }, {
-    f: filters.vignetting,
-    param1: 1.1
-  }, {
-    f: filters.tint,
-    param1: 0.1,
-    param2: 1
-  }, {
-    f: filters.gamma,
-    param1: 1.4,
-  }
+      f: filters.contrast,
+      param1: 1.7
+    }, {
+      f: filters.vignetting,
+      param1: 1.1
+    }, {
+      f: filters.tint,
+      param1: 0.1,
+      param2: 1
+    }, {
+      f: filters.gamma,
+      param1: 1.4,
+    }
   ],
   blackwhite: [
     {
-    f: filters.blackwhite
-  }
+      f: filters.blackwhite
+    }
   ],
   cold: [
     {
-    f:filters.tint,
-    param1:0.75,
-    param2:1
-  }
+      f:filters.tint,
+      param1:0.75,
+      param2:1
+    }
+  ],
+  test: [
+    {
+      f: filters.color,
+      param1: [0,0,0,255],
+      flipNext: false
+    },
+    {
+      f: filters.mask
+    }
   ]
 };
 
@@ -302,9 +336,15 @@ require(['jquery'], function($) {
 
   var canvas = document.getElementById("c");
   var processed = document.getElementById("p");
+  var temp = document.getElementById("t");
   var c = canvas.getContext("2d");
   var p = processed.getContext("2d");
+  var t = temp.getContext("2d");
   var original = null;
+
+  var mask = new Image();
+  mask.src = 'mask1.png';
+
   function process(effect) {
     var idata = original;
     var data = idata.data;
@@ -321,13 +361,19 @@ require(['jquery'], function($) {
 
     var input = data,
     out = other;
+    var useOther = true;
     for (var i = 0; i < effect.length; i++) {
-      effect[i].f(input, out, h, w, effect[i].param1, effect[i].param2);
-      var tmp = input;
-      input = out;
-      out = tmp;
+      var e = effect[i];
+      setEffectDefaults(e);
+      e.f(input, out, h, w, e.param1, e.param2);
+      if (e.flipNext) {
+        var tmp = input;
+        input = out;
+        out = tmp;
+        useOther != useOther;
+      }
     }
-    if (effect.length % 2) {
+    if (useOther) {
       return iother;
     } else {
       return idata;
@@ -342,6 +388,9 @@ require(['jquery'], function($) {
   });
   document.getElementById("cold").addEventListener("click", function(e) {
     c.putImageData(process(effects.cold), 0, 0);
+  });
+  document.getElementById("test").addEventListener("click", function(e) {
+    c.putImageData(process(effects.test), 0, 0);
   });
 
   var v = document.getElementById("v");
@@ -370,7 +419,25 @@ require(['jquery'], function($) {
       // Put the canvas instead of the video
       v.style.display = "none";
       canvas.style.display = "inline-block";
+
+      temp.width = canvas.width;
+      temp.height = canvas.height
+      t.drawImage(mask, 0, 0, mask.width, mask.height, 0, 0, temp.width, temp.height);
+      var maskImage = t.getImageData(0,0, temp.width, temp.height).data;
+      var maskArr = Float32Array(maskImage.length/4);
+      for(var i = 0, j=0; i < maskImage.length; i+=4, j++) {
+        var r = maskImage[i];
+        var g = maskImage[i+1];
+        var b = maskImage[i+2];
+        var brightness = 1 - ((3*r+4*g+b)>>>3)/255;
+        maskArr[j] = brightness;
+      }
+      effects.test[1].param1 = maskArr;
+      // effects.test[1].param1 = function() {
+      //   return 0.5;
+      // }
     });
+
     function process() {
       // Grab the pixel data from the backing canvas
       var idata = c.getImageData(0,0,canvas.width,canvas.height);
@@ -389,15 +456,8 @@ require(['jquery'], function($) {
       // filters.constrast(other, data, h, w, 1.7);
       // filters.vignetting(data, other, h, w, 1.1);
       // filters.convolution(data, other, h, w, convolutions.gaussian(3));
-      function m(x,y) {
-        if (y < 500) {
-          return 1-y/500;
-        } else {
-          return 0;
-        }
-      }
-      filters.blackwhite(data, other, h, w);
-      filters.mask(data, other, h, w, m);
+      // filters.blackwhite(data, other, h, w);
+      // filters.mask(data, other, h, w, t.getImageData(0,0,w,h));
 
       processed.width = v.videoWidth;
       processed.height = v.videoHeight;
