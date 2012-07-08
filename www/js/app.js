@@ -12,10 +12,6 @@ require.config({
 
 var global = this;
 
-function uploadImgur() {
-  var key = "aa325d27b64d323ae34eba7b029b2d85";
-}
-
 function rgb2hsv(r, g, b){
     r = r/255, g = g/255, b = b/255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -311,10 +307,25 @@ var effects ={
     param1: 1.1
   }
   ],
-  pixelate: [
+  invert: [
     {
-    f:filters.pixelate
+    f:filters.invert
+  }
+  ],
+  ancient: [
+    {
+      f:filters.sepia
+    },
+    {
+      f:filters.vignetting,
+      param1: 1.1
     }
+  ],
+  overdrive: [
+    {
+    f:filters.saturate,
+    param1: 7
+  }
   ],
   mask: [
     {
