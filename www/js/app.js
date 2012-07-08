@@ -453,7 +453,7 @@ require(['jquery'], function($) {
       return idata;
     }
   }
-  
+
   $('.effect').click(function() {
     var name = this.id;
     c.putImageData(process(effects[name]), 0, 0);
@@ -549,9 +549,14 @@ require(['jquery'], function($) {
     return;
   }
 
-document.getElementById("twitter").addEventListener("click", share);
+$('#facebook').click(function() {
+  share('fb');
+});
+$('#twitter').click(function() {
+  share('t');
+});
 // trigger me onclick
-function share() {
+function share(type) {
   try {
     var img = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
   } catch(e) {
@@ -576,7 +581,11 @@ function share() {
     },
     dataType: 'json'
   }).success(function(data) {
-    w.location.href = "https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: "+ data['upload']['links']['imgur_page'];
+    if (type == 'fb')
+      var url = 'https://www.facebook.com/sharer/sharer.php?u=' + data['upload']['links']['imgur_page'];
+    else if (type = 't') 
+      var url = 'https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: ' + data['upload']['links']['imgur_page'];
+    w.location.href = url;
   }).error(function() {
     alert('Could not reach api.imgur.com. Sorry :(');
     w.close();
