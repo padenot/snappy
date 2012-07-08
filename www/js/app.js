@@ -385,6 +385,7 @@ var ui = {
     });
     $('#effects').hide();
     $('#share').hide();
+    $('#go-to-share').hide();
   },
 
   initEffects: function() {
@@ -401,6 +402,7 @@ var ui = {
     $('#take').hide();
     $('#effects').hide();
     $('#share').show();
+    $('#go-to-share').hide();
   }
 }
 

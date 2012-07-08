@@ -440,7 +440,7 @@ button:hover {
   list-style: none;
   position: absolute;
   left: 340px;
-  top: -10px;
+  top: 0px;
   text-shadow: 0 1px rgba(255, 255, 255, 0.4);
 }
 
