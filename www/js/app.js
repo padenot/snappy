@@ -381,6 +381,10 @@ var ui = {
     $('#take').hide();
     $('#effects').show();
     $('#share').hide();
+    $('#go-to-share').show();
+    $('#go-to-share').click(function() {
+      ui.nextStep();
+    });
   },
 
   initShare: function() {
@@ -468,7 +472,6 @@ require(['jquery'], function($) {
   $('.effect').click(function() {
     var name = this.id;
     c.putImageData(process(effects[name]), 0, 0);
-    ui.nextStep();
   });
 
   var v = document.getElementById("v");
