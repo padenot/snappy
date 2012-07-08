@@ -165,7 +165,18 @@ var filters = {
       out[i+1] = rgb[1];
       out[i+2] = rgb[2];
     }
-    },
+  },
+  color: function(data, out, h, w, color) {
+    if (color.length === 3) {
+      color.push(255);
+    }
+    for (var i = 0; i < data.length; i+=4) {
+      out[i] = color[0];
+      out[i+1] = color[1];
+      out[i+2] = color[2];
+      out[i+3] = color[3];
+    }
+  },
   convolution: function(data, out, sh, sw, op) {
     var opSize = Math.round(Math.sqrt(op.length));
     var opHalfSize = Math.floor(opSize/2);
@@ -198,11 +209,18 @@ var filters = {
       }
     }
   },
-  mask: function(data, out, h, w, maskFunction) {
+  mask: function(data, out, h, w, m) {
+    console.log(h + " " + w);
+    if (typeof m === 'object') {
+      var img = m;
+      m = function(x,y) {
+        return img[y*w+x];
+      }
+    }
     for (var y=0; y<h; y++) {
       for (var x=0; x<w; x++) {
         var i = (y*w+x)*4;
-        var newAmount = maskFunction(x,y);
+        var newAmount = m(x,y);
         var origAmount = 1-newAmount;
         out[i] = newAmount*out[i] + origAmount*data[i];
         out[i+1] = newAmount*out[i+1] + origAmount*data[i+1];
@@ -232,6 +250,15 @@ var convolutions = {
   }
 }
 
+function setEffectDefaults(effect) {
+  if (typeof effect.flipNext === 'undefined') {
+    effect.flipNext = true;
+  }
+}
+
+var masks = [
+];
+
 var effects ={
   greenish: [
     {
@@ -251,8 +278,8 @@ var effects ={
   ],
   blackwhite: [
     {
-    f: filters.blackwhite
-  }
+      f: filters.blackwhite
+    }
   ],
   cold: [
     {
@@ -299,6 +326,16 @@ var effects ={
     f:filters.saturate,
     param1: 7
   }
+  ],
+  mask: [
+    {
+      f: filters.color,
+      param1: [0,0,0,255],
+      flipNext: false
+    },
+    {
+      f: filters.mask,
+    }
   ]
 };
 
@@ -353,6 +390,11 @@ var ui = {
   }
 }
 
+
+
+const WIDTH = 400;
+const HEIGHT = 400;
+
 // When you write javascript in separate files, list them as
 // dependencies along with jquery
 require(['jquery'], function($) {
@@ -361,9 +403,33 @@ require(['jquery'], function($) {
 
   var canvas = document.getElementById("c");
   var processed = document.getElementById("p");
+  var temp = document.getElementById("t");
   var c = canvas.getContext("2d");
   var p = processed.getContext("2d");
+  var t = temp.getContext("2d");
   var original = null;
+
+  temp.width = WIDTH;
+  temp.height = HEIGHT;
+  var temp = document.getElementById("t");
+  var t = temp.getContext("2d");
+  var div = document.getElementById("out");
+  var m = new Image();
+  m.onload = function() {
+    t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
+    var maskImage = t.getImageData(0,0, temp.width, temp.height).data;
+    var maskArr = new Float32Array(maskImage.length/4);
+    for(var i = 0, j=0; i < maskImage.length; i+=4, j++) {
+      var r = maskImage[i];
+      var g = maskImage[i+1];
+      var b = maskImage[i+2];
+      var brightness = 1 - ((3*r+4*g+b)>>>3)/255;
+      maskArr[j] = brightness;
+    }
+    effects.mask[1].param1 = maskArr;
+  };
+  m.src = 'masks/mask1.png';
+
   function process(effect) {
     var idata = original;
     var data = idata.data;
@@ -380,13 +446,19 @@ require(['jquery'], function($) {
 
     var input = data,
     out = other;
+    var useOther = true;
     for (var i = 0; i < effect.length; i++) {
-      effect[i].f(input, out, h, w, effect[i].param1, effect[i].param2);
-      var tmp = input;
-      input = out;
-      out = tmp;
+      var e = effect[i];
+      setEffectDefaults(e);
+      e.f(input, out, h, w, e.param1, e.param2);
+      if (e.flipNext) {
+        var tmp = input;
+        input = out;
+        out = tmp;
+        useOther != useOther;
+      }
     }
-    if (effect.length % 2) {
+    if (useOther) {
       return iother;
     } else {
       return idata;
@@ -401,8 +473,8 @@ require(['jquery'], function($) {
 
   var v = document.getElementById("v");
   v.addEventListener("loadedmetadata", function() {
-    canvas.width = 400;
-    canvas.height = 400;
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
     processed.width = v.videoWidth;
     processed.height = v.videoHeight;
     document.getElementById("take").addEventListener("click", function(e) {
@@ -425,7 +497,12 @@ require(['jquery'], function($) {
       // Put the canvas instead of the video
       v.style.display = "none";
       canvas.style.display = "inline-block";
+
+      // effects.test[1].param1 = function() {
+      //   return 0.5;
+      // }
     });
+
     function process() {
       // Grab the pixel data from the backing canvas
       var idata = c.getImageData(0,0,canvas.width,canvas.height);
@@ -444,15 +521,8 @@ require(['jquery'], function($) {
       // filters.constrast(other, data, h, w, 1.7);
       // filters.vignetting(data, other, h, w, 1.1);
       // filters.convolution(data, other, h, w, convolutions.gaussian(3));
-      function m(x,y) {
-        if (y < 500) {
-          return 1-y/500;
-        } else {
-          return 0;
-        }
-      }
-      filters.blackwhite(data, other, h, w);
-      filters.mask(data, other, h, w, m);
+      // filters.blackwhite(data, other, h, w);
+      // filters.mask(data, other, h, w, t.getImageData(0,0,w,h));
 
       processed.width = v.videoWidth;
       processed.height = v.videoHeight;
@@ -490,14 +560,14 @@ require(['jquery'], function($) {
     return;
   }
 
-  // If using Twitter Bootstrap, you need to require all the
-  // components that you use, like so:
-  // require('bootstrap/dropdown');
-  // require('bootstrap/alert');
-
-document.getElementById("twitter").addEventListener("click", share);
+$('#facebook').click(function() {
+  share('fb');
+});
+$('#twitter').click(function() {
+  share('t');
+});
 // trigger me onclick
-function share() {
+function share(type) {
   try {
     var img = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
   } catch(e) {
@@ -522,22 +592,14 @@ function share() {
     },
     dataType: 'json'
   }).success(function(data) {
-    w.location.href = "https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: "+ data['upload']['links']['imgur_page'];
+    if (type == 'fb')
+      var url = 'https://www.facebook.com/sharer/sharer.php?u=' + data['upload']['links']['imgur_page'];
+    else if (type = 't') 
+      var url = 'https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: ' + data['upload']['links']['imgur_page'];
+    w.location.href = url;
   }).error(function() {
     alert('Could not reach api.imgur.com. Sorry :(');
     w.close();
   });
 }
 });
-
-// Include the in-app payments API, and if it fails to load handle it
-// gracefully.
-// https://developer.mozilla.org/en/Apps/In-app_payments
-require(['https://marketplace-cdn.addons.mozilla.net/mozmarket.js'],
-        function() {},
-        function(err) {
-          global.mozmarket = global.mozmarket || {};
-          global.mozmarket.buy = function() {
-            alert('The in-app purchasing is currently unavailable.');
-          };
-        });
