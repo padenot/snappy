@@ -6,7 +6,7 @@ define(function () {
   function rgb2hsv(r, g, b) {
     r = r / 255, g = g / 255, b = b / 255;
     var max = Math.max(r, g, b),
-      min = Math.min(r, g, b);
+        min = Math.min(r, g, b);
     var h, s, v = max;
 
     var d = max - min;
@@ -66,7 +66,7 @@ define(function () {
   }
 
   var filters = {
-    "blackwhite": function (data, out, h, w) {
+    blackwhite: function (data, out, h, w) {
       for (var i = 0; i < data.length; i += 4) {
         var r = data[i];
         var g = data[i + 1];
@@ -77,7 +77,7 @@ define(function () {
         out[i + 2] = brightness;
       }
     },
-    "sepia": function (data, out, h, w) {
+    sepia: function (data, out, h, w) {
       for (var i = 0; i < data.length; i += 4) {
         var r = data[i],
           g = data[i + 1],
@@ -87,7 +87,7 @@ define(function () {
         out[i + 2] = (r * 0.272) + (g * 0.534) + (b * 0.131);
       }
     },
-    "contrast": function (data, out, h, w, param) {
+    contrast: function (data, out, h, w, param) {
       function contrast(f, param) {
         return (f - 0.5) * param + 0.5;
       }
@@ -100,7 +100,7 @@ define(function () {
         out[i + 2] = 255 * contrast(b / 255, param);
       }
     },
-    "vignetting": function (data, out, h, w, strength) {
+    vignetting: function (data, out, h, w, strength) {
       function distance(x, y, cx, cy) {
         return Math.sqrt(Math.abs(x - cx) + Math.abs(y - cy));
       }
@@ -117,7 +117,7 @@ define(function () {
         out[i + 2] = b * d;
       }
     },
-    "invert": function (data, out, h, w) {
+    invert: function (data, out, h, w) {
       for (var i = 0; i < data.length; i += 4) {
         var r = data[i],
           g = data[i + 1],
@@ -128,7 +128,7 @@ define(function () {
       }
     },
     // c: scaling factor
-    "saturate": function (data, out, h, w, saturation) {
+    saturate: function (data, out, h, w, saturation) {
       for (var i = 0; i < data.length; i += 4) {
         var r = data[i],
           g = data[i + 1],
@@ -147,7 +147,7 @@ define(function () {
         out[i + 2] = rgb[2];
       }
     },
-    "gamma": function (data, out, h, w, gamma) {
+    gamma: function (data, out, h, w, gamma) {
       for (var i = 0; i < data.length; i += 4) {
         var r = data[i],
           g = data[i + 1],
@@ -167,7 +167,7 @@ define(function () {
       }
     },
     // color: 
-    "tint": function (data, out, h, w, color, strength) {
+    tint: function (data, out, h, w, color, strength) {
       for (var i = 0; i < data.length; i += 4) {
         var r = data[i],
           g = data[i + 1],
@@ -238,7 +238,7 @@ define(function () {
       }
     },
     mask: function (data, out, h, w, m) {
-      console.log(h + " " + w);
+      console.log(h + ' ' + w);
       if (typeof m === 'object') {
         var img = m;
         m = function (x, y) {
@@ -280,10 +280,10 @@ define(function () {
   }
 
   function setEffectDefaults(effect) {
-      if (typeof effect.flipNext === 'undefined') {
-        effect.flipNext = true;
-      }
+    if (typeof effect.flipNext === 'undefined') {
+      effect.flipNext = true;
     }
+  }
 
   var masks = [];
 
@@ -355,19 +355,19 @@ define(function () {
 
   return {
     init: function () {
-      var canvas = document.getElementById("c");
-      var processed = document.getElementById("p");
-      var temp = document.getElementById("t");
-      var c = canvas.getContext("2d");
-      var p = processed.getContext("2d");
-      var t = temp.getContext("2d");
+      var canvas = document.getElementById('c');
+      var processed = document.getElementById('p');
+      var temp = document.getElementById('t');
+      var c = canvas.getContext('2d');
+      var p = processed.getContext('2d');
+      var t = temp.getContext('2d');
       var original = null;
 
       temp.width = WIDTH;
       temp.height = HEIGHT;
-      var temp = document.getElementById("t");
-      var t = temp.getContext("2d");
-      var div = document.getElementById("out");
+      var temp = document.getElementById('t');
+      var t = temp.getContext('2d');
+      var div = document.getElementById('out');
       var m = new Image();
       m.onload = function () {
         t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
@@ -441,13 +441,13 @@ define(function () {
         c.putImageData(process(effects[name]), 0, 0);
       });
 
-      var v = document.getElementById("v");
-      v.addEventListener("loadedmetadata", function () {
+      var v = document.getElementById('v');
+      v.addEventListener('loadedmetadata', function () {
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
         processed.width = v.videoWidth;
         processed.height = v.videoHeight;
-        document.getElementById("take").addEventListener("click", function (e) {
+        document.getElementById('take').addEventListener('click', function (e) {
           // We want to crop the image to a square, because hipster love square
           // photos.
           var xOffset, yOffset, xSize, ySize;
@@ -460,13 +460,13 @@ define(function () {
             yOffset = 0;
             xSize = ySize = v.videoWidth;
           }
-          c.drawImage(document.getElementById("v"), xOffset, yOffset, xSize, ySize, 0, 0, canvas.width, canvas.height);
+          c.drawImage(document.getElementById('v'), xOffset, yOffset, xSize, ySize, 0, 0, canvas.width, canvas.height);
           original = c.getImageData(0, 0, canvas.width, canvas.height);
           // stop the camera
-          v.src = "";
+          v.src = '';
           // Put the canvas instead of the video
-          v.style.display = "none";
-          canvas.style.display = "inline-block";
+          v.style.display = 'none';
+          canvas.style.display = 'inline-block';
 
           // effects.test[1].param1 = function() {
           //   return 0.5;
@@ -504,8 +504,8 @@ define(function () {
         // Below is the latest syntax. Using the old syntax for the time being
         // for backwards compatibility.
         function successCallback(stream) {
-          document.getElementById("v").src = stream;
-          document.getElementById("v").play();
+          document.getElementById('v').src = stream;
+          document.getElementById('v').play();
         }
 
         function errorCallback(error) {
@@ -520,8 +520,8 @@ define(function () {
         // Below is the latest syntax. Using the old syntax for the time being
         // for backwards compatibility.
         function successCallback(stream) {
-          document.getElementById("v").src = webkitURL.createObjectURL(stream);
-          document.getElementById("v").play();
+          document.getElementById('v').src = webkitURL.createObjectURL(stream);
+          document.getElementById('v').play();
         }
 
         function errorCallback(error) {
