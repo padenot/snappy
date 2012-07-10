@@ -4,8 +4,9 @@ require.config({
 
 // When you write javascript in separate files, list them as
 // dependencies along with jquery
-require(['jquery', 'ui', 'effects'], function($, ui, effects) {
+require(['jquery', 'ui', 'camera', 'effects'], function($, ui, camera, effects) {
   
+  camera.init();
   effects.init();
   ui.init();
 
