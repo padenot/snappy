@@ -1,4 +1,4 @@
-define(['jquery'], function($) {
+define(['jquery', 'share'], function($, share) {
   var ui = {
     step: 0,
 
@@ -53,6 +53,13 @@ define(['jquery'], function($) {
       $('#effects').hide();
       $('#share').show();
       $('#go-to-share').hide();
+
+      $('#facebook').click(function () {
+        share.share('fb');
+      });
+      $('#twitter').click(function () {
+        share.share('t');
+      });
     }
   }
 
