@@ -1,4 +1,4 @@
-define(['jquery', 'camera', 'share'], function($, camera, share) {
+define(['jquery', 'camera', 'effects', 'share'], function($, camera, effects, share) {
   var step = 0;
   var colors = ['#900', '#06c', '#360'];
 
@@ -39,6 +39,12 @@ define(['jquery', 'camera', 'share'], function($, camera, share) {
     $('#effects').show();
     $('#share').hide();
     $('#go-to-share').show();
+    $('.effect').click(function () {
+      var canvas = document.getElementById('c');
+      var c = canvas.getContext('2d');
+      var effectName = this.id;
+      c.putImageData(effects.processFromName(effectName), 0, 0);
+    });
     $('#go-to-share').click(function() {
       nextStep();
     });

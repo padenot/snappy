@@ -3,6 +3,99 @@ define(function () {
   const WIDTH = 400;
   const HEIGHT = 400;
 
+  function init() {
+    var canvas = document.getElementById('c');
+    var processed = document.getElementById('p');
+    var temp = document.getElementById('t');
+    var c = canvas.getContext('2d');
+    var p = processed.getContext('2d');
+    var t = temp.getContext('2d');
+
+    temp.width = WIDTH;
+    temp.height = HEIGHT;
+    var temp = document.getElementById('t');
+    var t = temp.getContext('2d');
+    var div = document.getElementById('out');
+    var m = new Image();
+    m.onload = function () {
+      t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
+      var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
+      var maskArr = new Float32Array(maskImage.length / 4);
+      for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
+        var r = maskImage[i];
+        var g = maskImage[i + 1];
+        var b = maskImage[i + 2];
+        var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
+        maskArr[j] = brightness;
+      }
+      effects.mask[1].param1 = maskArr;
+    };
+    m.src = 'masks/mask1.png';
+
+
+    var m = new Image();
+    m.onload = function () {
+      t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
+      var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
+      var maskArr = new Float32Array(maskImage.length / 4);
+      for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
+        var r = maskImage[i];
+        var g = maskImage[i + 1];
+        var b = maskImage[i + 2];
+        var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
+        maskArr[j] = brightness;
+      }
+      effects.blur[1].param1 = maskArr;
+    };
+    m.src = 'masks/circle_mask.png';
+  }
+
+  function processFromName(effectName) {
+    return process(effects[effectName]);
+  }
+
+  function process(effect) {
+    var canvas = document.getElementById('c');
+    var processed = document.getElementById('p');
+    var temp = document.getElementById('t');
+    var c = canvas.getContext('2d');
+    var p = processed.getContext('2d');
+    var t = temp.getContext('2d');
+
+    var idata = c.getImageData(0, 0, canvas.width, canvas.height);
+    var data = idata.data;
+    var iother = c.createImageData(idata);
+    var other = iother.data;
+    var w = idata.width;
+    var h = idata.height;
+    var limit = data.length;
+
+    // Set the alpha to opaque.
+    for (var i = 0; i < other.length; i += 4) {
+      other[i + 3] = 255;
+    }
+
+    var input = data,
+        out = other;
+    var useOther = true;
+    for (var i = 0; i < effect.length; i++) {
+      var e = effect[i];
+      setEffectDefaults(e);
+      e.f(input, out, h, w, e.param1, e.param2);
+      if (e.flipNext) {
+        var tmp = input;
+        input = out;
+        out = tmp;
+        useOther != useOther;
+      }
+    }
+    if (useOther) {
+      return iother;
+    } else {
+      return idata;
+    }
+  }
+
   function rgb2hsv(r, g, b) {
     r = r / 255, g = g / 255, b = b / 255;
     var max = Math.max(r, g, b),
@@ -354,93 +447,7 @@ define(function () {
   };
 
   return {
-    init: function () {
-      var canvas = document.getElementById('c');
-      var processed = document.getElementById('p');
-      var temp = document.getElementById('t');
-      var c = canvas.getContext('2d');
-      var p = processed.getContext('2d');
-      var t = temp.getContext('2d');
-      var original = null;
-
-      temp.width = WIDTH;
-      temp.height = HEIGHT;
-      var temp = document.getElementById('t');
-      var t = temp.getContext('2d');
-      var div = document.getElementById('out');
-      var m = new Image();
-      m.onload = function () {
-        t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
-        var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
-        var maskArr = new Float32Array(maskImage.length / 4);
-        for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
-          var r = maskImage[i];
-          var g = maskImage[i + 1];
-          var b = maskImage[i + 2];
-          var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
-          maskArr[j] = brightness;
-        }
-        effects.mask[1].param1 = maskArr;
-      };
-      m.src = 'masks/mask1.png';
-
-
-      var m = new Image();
-      m.onload = function () {
-        t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
-        var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
-        var maskArr = new Float32Array(maskImage.length / 4);
-        for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
-          var r = maskImage[i];
-          var g = maskImage[i + 1];
-          var b = maskImage[i + 2];
-          var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
-          maskArr[j] = brightness;
-        }
-        effects.blur[1].param1 = maskArr;
-      };
-      m.src = 'masks/circle_mask.png';
-
-      function process(effect) {
-        var idata = c.getImageData(0, 0, canvas.width, canvas.height);
-        var data = idata.data;
-        var iother = c.createImageData(idata);
-        var other = iother.data;
-        var w = idata.width;
-        var h = idata.height;
-        var limit = data.length;
-
-        // Set the alpha to opaque.
-        for (var i = 0; i < other.length; i += 4) {
-          other[i + 3] = 255;
-        }
-
-        var input = data,
-          out = other;
-        var useOther = true;
-        for (var i = 0; i < effect.length; i++) {
-          var e = effect[i];
-          setEffectDefaults(e);
-          e.f(input, out, h, w, e.param1, e.param2);
-          if (e.flipNext) {
-            var tmp = input;
-            input = out;
-            out = tmp;
-            useOther != useOther;
-          }
-        }
-        if (useOther) {
-          return iother;
-        } else {
-          return idata;
-        }
-      }
-
-      $('.effect').click(function () {
-        var name = this.id;
-        c.putImageData(process(effects[name]), 0, 0);
-      });
-    }
-  }
-
+  init: init,
+  processFromName: processFromName
+  };
 });
