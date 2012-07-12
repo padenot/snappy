@@ -8,12 +8,11 @@ define(function () {
   }
 
   function setupMasks() {
-    var temp = document.getElementById('t');
-    var t = temp.getContext('2d');
-
+    var temp = document.createElement('canvas');
     temp.width = WIDTH;
     temp.height = HEIGHT;
     var t = temp.getContext('2d');
+
     var m = new Image();
     m.onload = function () {
       t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
