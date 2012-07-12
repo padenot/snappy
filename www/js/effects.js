@@ -4,16 +4,15 @@ define(function () {
   const HEIGHT = 400;
 
   function init() {
-    var canvas = document.getElementById('c');
-    var processed = document.getElementById('p');
+    setupMasks();
+  }
+
+  function setupMasks() {
     var temp = document.getElementById('t');
-    var c = canvas.getContext('2d');
-    var p = processed.getContext('2d');
     var t = temp.getContext('2d');
 
     temp.width = WIDTH;
     temp.height = HEIGHT;
-    var temp = document.getElementById('t');
     var t = temp.getContext('2d');
     var div = document.getElementById('out');
     var m = new Image();
@@ -57,10 +56,8 @@ define(function () {
   function process(effect) {
     var canvas = document.getElementById('c');
     var processed = document.getElementById('p');
-    var temp = document.getElementById('t');
     var c = canvas.getContext('2d');
     var p = processed.getContext('2d');
-    var t = temp.getContext('2d');
 
     var idata = c.getImageData(0, 0, canvas.width, canvas.height);
     var data = idata.data;
