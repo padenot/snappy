@@ -14,7 +14,6 @@ define(function () {
     temp.width = WIDTH;
     temp.height = HEIGHT;
     var t = temp.getContext('2d');
-    var div = document.getElementById('out');
     var m = new Image();
     m.onload = function () {
       t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
@@ -328,7 +327,6 @@ define(function () {
       }
     },
     mask: function (data, out, h, w, m) {
-      console.log(h + ' ' + w);
       if (typeof m === 'object') {
         var img = m;
         m = function (x, y) {
