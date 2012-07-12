@@ -1,6 +1,5 @@
-define(function() {
+define(['jquery'], function($) {
   var canvas = document.getElementById("c");
-  // trigger me onclick
   function share(type) {
     try {
       var img = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
@@ -26,8 +25,9 @@ define(function() {
       },
       dataType: 'json'
     }).success(function (data) {
-      if (type == 'fb') var url = 'https://www.facebook.com/sharer/sharer.php?u=' + data['upload']['links']['imgur_page'];
-      else if (type = 't') var url = 'https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: ' + data['upload']['links']['imgur_page'];
+      var photoURL = data['upload']['links']['imgur_page'];
+      if (type == 'facebook') var url = 'https://www.facebook.com/sharer/sharer.php?u=' + photoURL;
+      else if (type = 'twitter') var url = 'https://twitter.com/intent/tweet?source=webclient&text=See how hipster I am: ' + photoURL;
       w.location.href = url;
     }).error(function () {
       alert('Could not reach api.imgur.com. Sorry :(');

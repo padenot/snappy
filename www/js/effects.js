@@ -467,10 +467,6 @@ define(function () {
           // Put the canvas instead of the video
           v.style.display = 'none';
           canvas.style.display = 'inline-block';
-
-          // effects.test[1].param1 = function() {
-          //   return 0.5;
-          // }
         });
 
         function process() {
@@ -486,13 +482,6 @@ define(function () {
           for (var i = 0; i < other.length; i += 4) {
             other[i + 3] = 255;
           }
-
-          // filters.sepia(data, other, h, w);
-          // filters.constrast(other, data, h, w, 1.7);
-          // filters.vignetting(data, other, h, w, 1.1);
-          // filters.convolution(data, other, h, w, convolutions.gaussian(3));
-          // filters.blackwhite(data, other, h, w);
-          // filters.mask(data, other, h, w, t.getImageData(0,0,w,h));
 
           processed.width = v.videoWidth;
           processed.height = v.videoHeight;

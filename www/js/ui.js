@@ -48,10 +48,10 @@ define(['jquery', 'share'], function($, share) {
     $('#go-to-share').hide();
 
     $('#facebook').click(function () {
-      share.share('fb');
+      share.share('facebook');
     });
     $('#twitter').click(function () {
-      share.share('t');
+      share.share('twitter');
     });
   };
 
