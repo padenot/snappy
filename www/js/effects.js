@@ -13,38 +13,41 @@ define(function () {
     temp.height = HEIGHT;
     var t = temp.getContext('2d');
 
-    var m = new Image();
-    m.onload = function () {
-      t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
-      var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
-      var maskArr = new Float32Array(maskImage.length / 4);
-      for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
-        var r = maskImage[i];
-        var g = maskImage[i + 1];
-        var b = maskImage[i + 2];
-        var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
-        maskArr[j] = brightness;
-      }
-      effects.mask[1].param1 = maskArr;
-    };
-    m.src = 'masks/mask1.png';
+    (function setupMask() {
+      var m = new Image();
+      m.onload = function () {
+        t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
+        var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
+        var maskArr = new Float32Array(maskImage.length / 4);
+        for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
+          var r = maskImage[i];
+          var g = maskImage[i + 1];
+          var b = maskImage[i + 2];
+          var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
+          maskArr[j] = brightness;
+        }
+        effects.mask[1].param1 = maskArr;
+      };
+      m.src = 'masks/mask1.png';
+    })();
 
-
-    var m = new Image();
-    m.onload = function () {
-      t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
-      var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
-      var maskArr = new Float32Array(maskImage.length / 4);
-      for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
-        var r = maskImage[i];
-        var g = maskImage[i + 1];
-        var b = maskImage[i + 2];
-        var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
-        maskArr[j] = brightness;
-      }
-      effects.blur[1].param1 = maskArr;
-    };
-    m.src = 'masks/circle_mask.png';
+    (function setupBlur() {
+      var m = new Image();
+      m.onload = function () {
+        t.drawImage(m, 0, 0, m.width, m.height, 0, 0, temp.width, temp.height);
+        var maskImage = t.getImageData(0, 0, temp.width, temp.height).data;
+        var maskArr = new Float32Array(maskImage.length / 4);
+        for (var i = 0, j = 0; i < maskImage.length; i += 4, j++) {
+          var r = maskImage[i];
+          var g = maskImage[i + 1];
+          var b = maskImage[i + 2];
+          var brightness = 1 - ((3 * r + 4 * g + b) >>> 3) / 255;
+          maskArr[j] = brightness;
+        }
+        effects.blur[1].param1 = maskArr;
+      };
+      m.src = 'masks/circle_mask.png';
+    })();
   }
 
   function processFromName(effectName) {
