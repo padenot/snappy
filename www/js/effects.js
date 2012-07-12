@@ -439,7 +439,7 @@ define(function () {
   };
 
   return {
-  init: init,
-  processFromName: processFromName
+    init: init,
+    processFromName: processFromName
   };
 });
