@@ -440,33 +440,6 @@ define(function () {
         var name = this.id;
         c.putImageData(process(effects[name]), 0, 0);
       });
-
-      var video = document.getElementById('video');
-      video.addEventListener('loadedmetadata', function () {
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
-        processed.width = video.videoWidth;
-        processed.height = video.videoHeight;
-
-        function process() {
-          // Grab the pixel data from the backing canvas
-          var idata = c.getImageData(0, 0, canvas.width, canvas.height);
-          var data = idata.data;
-          var iother = c.createImageData(idata);
-          var other = iother.data;
-          var w = idata.width;
-          var h = idata.height;
-          var limit = data.length;
-
-          for (var i = 0; i < other.length; i += 4) {
-            other[i + 3] = 255;
-          }
-
-          processed.width = v.videoWidth;
-          processed.height = v.videoHeight;
-          p.putImageData(iother, 0, 0);
-        }
-      });
     }
   }
 
