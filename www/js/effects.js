@@ -1,5 +1,4 @@
 define(function () {
-
   const WIDTH = 400;
   const HEIGHT = 400;
 
