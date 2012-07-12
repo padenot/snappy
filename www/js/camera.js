@@ -11,8 +11,8 @@ define(function() {
 
   function mozInit() {
     function successCallback(stream) {
-      document.getElementById('v').src = stream;
-      document.getElementById('v').play();
+      document.getElementById('video').src = stream;
+      document.getElementById('video').play();
     }
 
     function errorCallback(error) {
@@ -27,8 +27,8 @@ define(function() {
 
   function webkitInit() {
     function successCallback(stream) {
-      document.getElementById('v').src = webkitURL.createObjectURL(stream);
-      document.getElementById('v').play();
+      document.getElementById('video').src = webkitURL.createObjectURL(stream);
+      document.getElementById('video').play();
     }
 
     function errorCallback(error) {
