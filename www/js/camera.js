@@ -1,4 +1,11 @@
 define(function() {
+  const WIDTH = 400;
+  const HEIGHT = 400;
+
+  var videoEl = document.getElementById('video');
+  var canvasEl = document.getElementById("c");
+  var processedEl = document.getElementById('p');
+
   function init() {
     if (navigator.mozGetUserMedia) {
       mozInit();
@@ -11,8 +18,8 @@ define(function() {
 
   function mozInit() {
     function successCallback(stream) {
-      document.getElementById('video').src = stream;
-      document.getElementById('video').play();
+      videoEl.src = stream;
+      videoEl.play();
     }
 
     function errorCallback(error) {
@@ -27,8 +34,8 @@ define(function() {
 
   function webkitInit() {
     function successCallback(stream) {
-      document.getElementById('video').src = webkitURL.createObjectURL(stream);
-      document.getElementById('video').play();
+      videoEl.src = webkitURL.createObjectURL(stream);
+      videoEl.play();
     }
 
     function errorCallback(error) {
@@ -40,7 +47,36 @@ define(function() {
     }, successCallback, errorCallback);
   }
 
+  function takePhoto() {
+    var c = canvasEl.getContext('2d');
+
+    canvasEl.width = WIDTH;
+    canvasEl.height = HEIGHT;
+    processedEl.width = videoEl.videoWidth;
+    processedEl.height = videoEl.videoHeight;
+
+    // Crop photo to square
+    var xOffset, yOffset, xSize, ySize;
+    if (videoEl.videoHeight < videoEl.videoWidth) {
+      xOffset = (videoEl.videoWidth - videoEl.videoHeight) / 2;
+      yOffset = 0;
+      xSize = ySize = videoEl.videoHeight;
+    } else {
+      xOffset = (videoEl.videoHeight - videoEl.videoWidth) / 2;
+      yOffset = 0;
+      xSize = ySize = videoEl.videoWidth;
+    }
+    c.drawImage(videoEl, xOffset, yOffset, xSize, ySize, 0, 0, canvasEl.width, canvasEl.height);
+
+    // stop the camera
+    video.src = '';
+    // Put the canvas instead of the video
+    video.style.display = 'none';
+    canvasEl.style.display = 'inline-block';
+  }
+
   return {
-    init: init
+    init: init,
+    takePhoto: takePhoto
   };
 });

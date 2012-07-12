@@ -1,4 +1,4 @@
-define(['jquery', 'share'], function($, share) {
+define(['jquery', 'camera', 'share'], function($, camera, share) {
   var step = 0;
   var colors = ['#900', '#06c', '#360'];
 
@@ -29,6 +29,9 @@ define(['jquery', 'share'], function($, share) {
     $('#effects').hide();
     $('#share').hide();
     $('#go-to-share').hide();
+    $('#take').click(function() {
+      camera.takePhoto();
+    });
   };
 
   function initEffects() {

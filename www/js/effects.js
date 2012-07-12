@@ -402,7 +402,7 @@ define(function () {
       m.src = 'masks/circle_mask.png';
 
       function process(effect) {
-        var idata = original;
+        var idata = c.getImageData(0, 0, canvas.width, canvas.height);
         var data = idata.data;
         var iother = c.createImageData(idata);
         var other = iother.data;
@@ -447,27 +447,6 @@ define(function () {
         canvas.height = HEIGHT;
         processed.width = video.videoWidth;
         processed.height = video.videoHeight;
-        document.getElementById('take').addEventListener('click', function (e) {
-          // We want to crop the image to a square, because hipster love square
-          // photos.
-          var xOffset, yOffset, xSize, ySize;
-          if (video.videoHeight < video.videoWidth) {
-            xOffset = (video.videoWidth - video.videoHeight) / 2;
-            yOffset = 0;
-            xSize = ySize = video.videoHeight;
-          } else {
-            xOffset = (video.videoHeight - video.videoWidth) / 2;
-            yOffset = 0;
-            xSize = ySize = video.videoWidth;
-          }
-          c.drawImage(video, xOffset, yOffset, xSize, ySize, 0, 0, canvas.width, canvas.height);
-          original = c.getImageData(0, 0, canvas.width, canvas.height);
-          // stop the camera
-          video.src = '';
-          // Put the canvas instead of the video
-          video.style.display = 'none';
-          canvas.style.display = 'inline-block';
-        });
 
         function process() {
           // Grab the pixel data from the backing canvas
