@@ -378,8 +378,6 @@ define(function () {
     }
   }
 
-  var masks = [];
-
   var effects = {
     greenish: [{
       f: filters.contrast,
