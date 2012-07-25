@@ -396,8 +396,8 @@ header #steps .step.active .number {
   max-width: none;
 }
 
-#v {
-  background: #222;
+#video {
+  background: #000;
 }
 
 button {
