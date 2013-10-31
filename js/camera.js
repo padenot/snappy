@@ -5,6 +5,7 @@ define(function() {
   var videoEl = document.getElementById('video');
   var canvasEl = document.getElementById("c");
   var processedEl = document.getElementById('p');
+  var mediaStream = null;
 
   function init() {
     if (navigator.mozGetUserMedia) {
@@ -18,7 +19,8 @@ define(function() {
 
   function mozInit() {
     function successCallback(stream) {
-      videoEl.src = stream;
+      mediaStream = stream;
+      videoEl.src = URL.createObjectURL(mediaStream);
       videoEl.play();
     }
 
@@ -34,7 +36,8 @@ define(function() {
 
   function webkitInit() {
     function successCallback(stream) {
-      videoEl.src = webkitURL.createObjectURL(stream);
+      mediaStream = stream;
+      videoEl.src = webkitURL.createObjectURL(mediaStream);
       videoEl.play();
     }
 
@@ -69,7 +72,10 @@ define(function() {
     c.drawImage(videoEl, xOffset, yOffset, xSize, ySize, 0, 0, canvasEl.width, canvasEl.height);
 
     // stop the camera
-    video.src = '';
+    // XXX this does not work at all.
+    mediaStream.stop();
+    mediaStream = null;
+    video.src = undefined;
     // Put the canvas instead of the video
     video.style.display = 'none';
     canvasEl.style.display = 'inline-block';

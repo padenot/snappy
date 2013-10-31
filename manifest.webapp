@@ -1,0 +1,18 @@
+{
+  "version": "0.1",
+  "name": "Snappy",
+  "description": "The hipstier app.",
+  "icons": {
+    "16": "/img/icons/mortar-16.png",
+    "48": "/img/icons/mortar-48.png",
+    "128": "/img/icons/mortar-128.png"
+  },
+  "developer": {
+    "name": "Your Name",
+    "url": "http://yourawesomeapp.com"
+  },
+  "installs_allowed_from": ["*"],
+  "appcache_path": "/cache.manifest",
+  "locales": { },
+  "default_locale": "en"
+}
