@@ -3,16 +3,16 @@
   "name": "Snappy",
   "description": "The hipstier app.",
   "icons": {
-    "16": "/img/icons/mortar-16.png",
-    "48": "/img/icons/mortar-48.png",
-    "128": "/img/icons/mortar-128.png"
+    "32":  "/img/logo-32.png",
+    "60":  "/img/logo-60.png",
+    "64":  "/img/logo-64.png",
+    "128": "/img/logo-128.png",
+    "256": "/img/logo-256.png",
   },
   "developer": {
-    "name": "Your Name",
-    "url": "http://yourawesomeapp.com"
-  },
+    "name": "Paul Adenot, Stephen Crane & Chris Lee"
+   },
   "installs_allowed_from": ["*"],
-  "appcache_path": "/cache.manifest",
-  "locales": { },
+  "appcache_path": "/snappy.appcache",
   "default_locale": "en"
 }
